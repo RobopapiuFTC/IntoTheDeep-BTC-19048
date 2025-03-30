@@ -16,8 +16,9 @@ import java.util.concurrent.TimeUnit;
 import Hardware.VariableStorage;
 import com.pedropathing.pathgen.Path;
 import com.rowanmcalpin.nextftc.core.Subsystem;
+import com.rowanmcalpin.nextftc.core.command.Command;
 
-public class hardwarePapiu {
+public class hardwarePapiu extends Subsystem{
 
     public final OpMode myOpMode;
 
@@ -85,7 +86,7 @@ public class hardwarePapiu {
         misumi.setMode(DcMotor.RunMode.RUN_USING_ENCODER); */
 
     }
-    public void movement(Gamepad gamepad1){
+    public Command movement(Gamepad gamepad1){
         double drive = -gamepad1.left_stick_y; // Remember, Y stick is reversed!
         double strafe = gamepad1.left_stick_x; // Counteract imperfect strafing
         double turn = gamepad1.right_stick_x;
