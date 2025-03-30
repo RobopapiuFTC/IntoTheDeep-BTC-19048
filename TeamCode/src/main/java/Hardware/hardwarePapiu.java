@@ -86,7 +86,7 @@ public class hardwarePapiu extends Subsystem{
         misumi.setMode(DcMotor.RunMode.RUN_USING_ENCODER); */
 
     }
-    public Command movement(Gamepad gamepad1){
+    public void movement(Gamepad gamepad1){
         double drive = -gamepad1.left_stick_y; // Remember, Y stick is reversed!
         double strafe = gamepad1.left_stick_x; // Counteract imperfect strafing
         double turn = gamepad1.right_stick_x;
