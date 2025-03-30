@@ -13,6 +13,8 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import  com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import Systems.Claw;
+import Systems.Lift;
 
 import Hardware.hardwarePapiu;
 import pedroPathing.constants.FConstants;
@@ -330,8 +332,6 @@ public class AutoColor extends OpMode{
         pathTimer = new Timer();
         opmodeTimer = new Timer();
         opmodeTimer.resetTimer();
-
-        robot.init();
 
         follower = new Follower(hardwareMap, FConstants.class, LConstants.class);
         follower.setStartingPose(startPose);
