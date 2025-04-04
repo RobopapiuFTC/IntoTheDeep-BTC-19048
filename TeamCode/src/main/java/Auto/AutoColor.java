@@ -15,6 +15,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import Systems.Claw;
 import Systems.Lift;
+import Vision.Vision;
 
 import Hardware.hardwarePapiu;
 import pedroPathing.constants.FConstants;
@@ -28,6 +29,8 @@ public class AutoColor extends OpMode{
                 - Robot Position: "if(follower.getPose().getX() > 36) {}"
     */
     private Follower follower;
+    private Vision vision;
+    private int[] unwanted;
     private Timer pathTimer, actionTimer, opmodeTimer;
     private int pathState;
     hardwarePapiu robot = new hardwarePapiu(this);
@@ -191,10 +194,17 @@ public class AutoColor extends OpMode{
         switch (pathState) {
             case 0:
                 follower.followPath(scorePreload);
+                //comenzi pentru preload aka glisiera si cleste si alea
                 setPathState(1);
                 break;
             case 1:
                 if(!follower.isBusy()) {
+                    //Comenzi pentru preload adica lasa cleste ala in mm
+                    vision.find();
+                    follower.followPath(vision.toTarget());
+                    //Comenzi pentru luat spec 6
+
+                    //Dupa ar trebui sa mergi la human player si plm da vezi tu dupa ce e gata vision
                     setPathState(2);
                 }
                 break;
@@ -335,6 +345,7 @@ public class AutoColor extends OpMode{
 
         follower = new Follower(hardwareMap, FConstants.class, LConstants.class);
         follower.setStartingPose(startPose);
+        vision = new Vision(hardwareMap,telemetry,unwanted,follower,1);
         buildPaths();
     }
 
@@ -345,6 +356,7 @@ public class AutoColor extends OpMode{
     @Override
     public void start() {
         opmodeTimer.resetTimer();
+        vision.on();
         setPathState(0);
     }
 
