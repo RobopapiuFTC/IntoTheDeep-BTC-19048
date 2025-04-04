@@ -35,11 +35,13 @@ public class AutoColor extends OpMode{
     private int pathState;
     hardwarePapiu robot = new hardwarePapiu(this);
 
-    private final Pose startPose = new Pose(7, 64, Math.toRadians(0));  // Starting position
-    private final Pose scorePose = new Pose(40, 68, Math.toRadians(0)); // Scoring position
+    private final Pose startPose = new Pose(7, 64, Math.toRadians(180));  // Starting position
+    private final Pose scorePose = new Pose(40, 68, Math.toRadians(180)); // Scoring position
     private final Pose humanPose = new Pose(13, 24, Math.toRadians(180)); // Scoring position
 
     private Path scorePreload, park;
+    private Pose location,target;
+    private PathChain ParkSpec6;
     private PathChain positionLine1,linePickup1, linePickup2, linePickup3, humanLeave1, humanLeave2, humanLeave3, scorePickup1, scorePickup2, scorePickup3, scorePickup4, humanPickup1, humanPickup2, humanPickup3, humanPickup4;
     public void buildPaths() {
         scorePreload = new Path(new BezierLine(new Point(startPose), new Point(scorePose)));
@@ -47,10 +49,8 @@ public class AutoColor extends OpMode{
 
         linePickup1 = follower.pathBuilder()
                 .addPath(new BezierCurve(
-                                new Point(40.000, 68.000, Point.CARTESIAN),
-                                new Point(7.416, 23.971, Point.CARTESIAN),
-                                new Point(27.938, 24.489, Point.CARTESIAN),
-                                new Point(72.604, 51.047, Point.CARTESIAN),
+                                new Point(15, 30, Point.CARTESIAN),
+                                new Point(62, 44.5, Point.CARTESIAN),
                                 new Point(58.000, 24.000, Point.CARTESIAN)
                         )
                 )
@@ -202,113 +202,129 @@ public class AutoColor extends OpMode{
                     //Comenzi pentru preload adica lasa cleste ala in mm
                     vision.find();
                     follower.followPath(vision.toTarget());
-                    //Comenzi pentru luat spec 6
-
-                    //Dupa ar trebui sa mergi la human player si plm da vezi tu dupa ce e gata vision
                     setPathState(2);
                 }
                 break;
+
             case 2:
+                if(!follower.isBusy()) {
+                   ParkSpec6 = follower.pathBuilder()
+                           .addPath(new BezierLine(
+                                           follower.getPose(),
+                                           new Pose(15, 30, follower.getPose().getHeading())
+                                   )
+                           )
+                           .setConstantHeadingInterpolation(follower.getPose().getHeading())
+                           .build();
+                    //Comenzi pentru luat spec 6
+
+                    follower.followPath(ParkSpec6);
+                    setPathState(3);
+                }
+                break;
+
+
+            case 3:
                 if(!follower.isBusy()) {
                     follower.followPath(linePickup1,true);
                     if(follower.getPose().getY() < 50) {
                     }
-                    setPathState(3);
-                }
-                break;
-            case 3:
-                if(!follower.isBusy()) {
-                    follower.followPath(humanLeave1,true);
                     setPathState(4);
                 }
                 break;
             case 4:
                 if(!follower.isBusy()) {
-                    follower.followPath(linePickup2,true);
+                    follower.followPath(humanLeave1,true);
                     setPathState(5);
                 }
                 break;
             case 5:
                 if(!follower.isBusy()) {
-                    follower.followPath(humanLeave2,true);
+                    follower.followPath(linePickup2,true);
                     setPathState(6);
                 }
                 break;
             case 6:
                 if(!follower.isBusy()) {
-                    follower.followPath(linePickup3, true);
+                    follower.followPath(humanLeave2,true);
                     setPathState(7);
                 }
                 break;
             case 7:
                 if(!follower.isBusy()) {
-                    follower.followPath(humanLeave3,true);
+                    follower.followPath(linePickup3, true);
                     setPathState(8);
                 }
                 break;
             case 8:
                 if(!follower.isBusy()) {
-                    follower.followPath(humanPickup1,true);
-                    if(follower.getPose().getY() < 20) {
-                    }
+                    follower.followPath(humanLeave3,true);
                     setPathState(9);
                 }
                 break;
             case 9:
                 if(!follower.isBusy()) {
-                    follower.followPath(scorePickup1,true);
+                    follower.followPath(humanPickup1,true);
+                    if(follower.getPose().getY() < 20) {
+                    }
                     setPathState(10);
                 }
                 break;
             case 10:
                 if(!follower.isBusy()) {
-                    follower.followPath(humanPickup2,true);
-                    if(follower.getPose().getY() < 60) {
-                    }
+                    follower.followPath(scorePickup1,true);
                     setPathState(11);
                 }
                 break;
             case 11:
                 if(!follower.isBusy()) {
-                    follower.followPath(scorePickup2,true);
+                    follower.followPath(humanPickup2,true);
+                    if(follower.getPose().getY() < 60) {
+                    }
                     setPathState(12);
                 }
                 break;
             case 12:
                 if(!follower.isBusy()) {
-                    follower.followPath(humanPickup3,true);
-                    if(follower.getPose().getY() < 60) {
-                    }
+                    follower.followPath(scorePickup2,true);
                     setPathState(13);
                 }
                 break;
             case 13:
                 if(!follower.isBusy()) {
-                    follower.followPath(scorePickup3,true);
+                    follower.followPath(humanPickup3,true);
+                    if(follower.getPose().getY() < 60) {
+                    }
                     setPathState(14);
                 }
                 break;
             case 14:
                 if(!follower.isBusy()) {
-                    follower.followPath(humanPickup4,true);
-                    if(follower.getPose().getY() < 60) {
-                    }
+                    follower.followPath(scorePickup3,true);
                     setPathState(15);
                 }
                 break;
             case 15:
                 if(!follower.isBusy()) {
-                    follower.followPath(scorePickup4,true);
+                    follower.followPath(humanPickup4,true);
+                    if(follower.getPose().getY() < 60) {
+                    }
                     setPathState(16);
                 }
                 break;
             case 16:
                 if(!follower.isBusy()) {
-                    follower.followPath(park,true);
+                    follower.followPath(scorePickup4,true);
                     setPathState(17);
                 }
                 break;
             case 17:
+                if(!follower.isBusy()) {
+                    follower.followPath(park,true);
+                    setPathState(18);
+                }
+                break;
+            case 18:
                 if(!follower.isBusy()) {
                     setPathState(-1);
                 }
