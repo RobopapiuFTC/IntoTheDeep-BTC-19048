@@ -226,6 +226,7 @@ public class AutoColor extends OpMode{
 
             case 3:
                 if(!follower.isBusy()) {
+                    //Comenzi pentru lasat spec 6
                     follower.followPath(linePickup1,true);
                     if(follower.getPose().getY() < 50) {
                     }
