@@ -190,7 +190,7 @@ public class AutoColor extends OpMode{
         park.setConstantHeadingInterpolation(Math.toRadians(180));
     }
 
-    public void autonomousPathUpdate() throws InterruptedException {
+    public void autonomousPathUpdate(){
         switch (pathState) {
             case 0:
                 follower.followPath(scorePreload);
@@ -341,10 +341,7 @@ public class AutoColor extends OpMode{
     public void loop() {
 
         follower.update();
-        try {
-            autonomousPathUpdate();
-        } catch (InterruptedException e) {
-        }
+        autonomousPathUpdate();
         robot.poseteleop=follower.getPose();
 
         telemetry.addData("path state", pathState);
