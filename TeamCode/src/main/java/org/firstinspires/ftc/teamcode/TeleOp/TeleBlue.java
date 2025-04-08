@@ -15,7 +15,7 @@ import org.firstinspires.ftc.teamcode.Systems.Misumi;
 import org.firstinspires.ftc.teamcode.Systems.Outtake;
 
 @TeleOp(name = "TeleBlue")
-class TeleBlue extends NextFTCOpMode {
+public class TeleBlue extends NextFTCOpMode {
     public Command driverControlled;
     public TeleBlue() {
         super(Claw.INSTANCE, Lift.INSTANCE, Outtake.INSTANCE, Intake.INSTANCE, Misumi.INSTANCE);

@@ -10,7 +10,8 @@ import com.rowanmcalpin.nextftc.ftc.OpModeData;
 import com.rowanmcalpin.nextftc.ftc.hardware.controllables.Controllable;
 import com.rowanmcalpin.nextftc.ftc.hardware.controllables.RunToPosition;
 
-public class Lift extends Subsystem {
+public class Lift extends Subsystem
+{
     public static final Lift INSTANCE = new Lift();
     private Lift() { }
 
