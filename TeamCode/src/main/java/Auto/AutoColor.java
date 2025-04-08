@@ -35,9 +35,9 @@ public class AutoColor extends OpMode{
     private int pathState;
     hardwarePapiu robot = new hardwarePapiu(this);
 
-    private final Pose startPose = new Pose(7, 64, Math.toRadians(180));  // Starting position
-    private final Pose scorePose = new Pose(40, 68, Math.toRadians(180)); // Scoring position
-    private final Pose humanPose = new Pose(13, 24, Math.toRadians(180)); // Scoring position
+    private final Pose startPose = new Pose(7, 64, Math.toRadians(0));  // Starting position
+    private final Pose scorePose = new Pose(40, 68, Math.toRadians(0)); // Scoring position
+    private final Pose humanPose = new Pose(13, 24, Math.toRadians(0)); // Scoring position
 
     private Path scorePreload, park;
     private Pose location,target;
@@ -54,7 +54,7 @@ public class AutoColor extends OpMode{
                                 new Point(58.000, 24.000, Point.CARTESIAN)
                         )
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(90))
+                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(90))
                 .build();
 
         humanLeave1 = follower.pathBuilder()
@@ -114,7 +114,7 @@ public class AutoColor extends OpMode{
                                 new Point(13.000, 24.000, Point.CARTESIAN)
                         )
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(180))
+                .setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(0))
                 .build();
 
         scorePickup1 = follower.pathBuilder()
@@ -124,7 +124,7 @@ public class AutoColor extends OpMode{
                                 new Point(40.000, 68.000, Point.CARTESIAN)
                         )
                 )
-                .setConstantHeadingInterpolation(Math.toRadians(180))
+                .setConstantHeadingInterpolation(Math.toRadians(0))
                 .build();
         humanPickup2 = follower.pathBuilder()
                 .addPath(
@@ -133,7 +133,7 @@ public class AutoColor extends OpMode{
                                 new Point(13.000, 24.000, Point.CARTESIAN)
                         )
                 )
-                .setConstantHeadingInterpolation(Math.toRadians(180))
+                .setConstantHeadingInterpolation(Math.toRadians(0))
                 .build();
 
         scorePickup2 = follower.pathBuilder()
@@ -143,7 +143,7 @@ public class AutoColor extends OpMode{
                                 new Point(40.000, 68.000, Point.CARTESIAN)
                         )
                 )
-                .setConstantHeadingInterpolation(Math.toRadians(180))
+                .setConstantHeadingInterpolation(Math.toRadians(0))
                 .build();
         humanPickup3 = follower.pathBuilder()
                 .addPath(
@@ -152,7 +152,7 @@ public class AutoColor extends OpMode{
                                 new Point(13.000, 24.000, Point.CARTESIAN)
                         )
                 )
-                .setConstantHeadingInterpolation(Math.toRadians(180))
+                .setConstantHeadingInterpolation(Math.toRadians(0))
                 .build();
 
         scorePickup3 = follower.pathBuilder()
@@ -162,7 +162,7 @@ public class AutoColor extends OpMode{
                                 new Point(40.000, 68.000, Point.CARTESIAN)
                         )
                 )
-                .setConstantHeadingInterpolation(Math.toRadians(180))
+                .setConstantHeadingInterpolation(Math.toRadians(0))
                 .build();
         humanPickup4 = follower.pathBuilder()
                 .addPath(
@@ -171,7 +171,7 @@ public class AutoColor extends OpMode{
                                 new Point(13.000, 24.000, Point.CARTESIAN)
                         )
                 )
-                .setConstantHeadingInterpolation(Math.toRadians(180))
+                .setConstantHeadingInterpolation(Math.toRadians(0))
                 .build();
 
         scorePickup4 = follower.pathBuilder()
@@ -181,16 +181,16 @@ public class AutoColor extends OpMode{
                                 new Point(40.000, 68.000, Point.CARTESIAN)
                         )
                 )
-                .setConstantHeadingInterpolation(Math.toRadians(180))
+                .setConstantHeadingInterpolation(Math.toRadians(0))
                 .build();
         park = new Path( new BezierLine(
                 new Point(40.000, 68.000, Point.CARTESIAN),
                 new Point(13.000, 24.000, Point.CARTESIAN)
         ));
-        park.setConstantHeadingInterpolation(Math.toRadians(180));
+        park.setConstantHeadingInterpolation(Math.toRadians(0));
     }
 
-    public void autonomousPathUpdate(){
+    public void autonomousPathUpdate() throws InterruptedException{
         switch (pathState) {
             case 0:
                 follower.followPath(scorePreload);
@@ -201,6 +201,7 @@ public class AutoColor extends OpMode{
                 if(!follower.isBusy()) {
                     //Comenzi pentru preload adica lasa cleste ala in mm
                     vision.find();
+                    Thread.sleep(1000);
                     follower.followPath(vision.toTarget());
                     setPathState(2);
                 }
@@ -341,13 +342,18 @@ public class AutoColor extends OpMode{
     public void loop() {
 
         follower.update();
-        autonomousPathUpdate();
+        try {
+            autonomousPathUpdate();
+        } catch (InterruptedException e) {
+
+        }
         robot.poseteleop=follower.getPose();
 
         telemetry.addData("path state", pathState);
         telemetry.addData("x", follower.getPose().getX());
         telemetry.addData("y", follower.getPose().getY());
         telemetry.addData("heading", follower.getPose().getHeading());
+        telemetry.addData("Sample Position", "X: %.2f, Y: %.2f", vision.getTarget().getX(), vision.getTarget().getY());
         telemetry.update();
     }
 
@@ -359,7 +365,7 @@ public class AutoColor extends OpMode{
 
         follower = new Follower(hardwareMap, FConstants.class, LConstants.class);
         follower.setStartingPose(startPose);
-        vision = new Vision(hardwareMap,telemetry,unwanted,follower,1);
+        vision = new Vision(hardwareMap,telemetry,"blue","yellow",follower,1);
         buildPaths();
     }
 

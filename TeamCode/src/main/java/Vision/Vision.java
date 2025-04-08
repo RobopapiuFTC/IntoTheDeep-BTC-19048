@@ -19,9 +19,9 @@ import java.util.List;
 @Config
 public class Vision {
     // Limelight and claw configuration
-    public static double limelightHeight = 19; // Camera height in inches
+    public static double limelightHeight = 10; // Camera height in inches
     public static double limelightAngle = 60; // Camera angle (0° = down, 90° = forward)
-    public static double intakeForwardOffset = 18; // Claw's forward offset from the camera
+    public static double intakeForwardOffset = 5; // Claw's forward offset from the camera
     public static double intakeLateralOffset = 5; // Claw's lateral (right is +) offset from the camera
 
     private Pose sample = new Pose(), difference = new Pose(), target = new Pose(); // The best sample's position
@@ -30,13 +30,15 @@ public class Vision {
     private PathChain toTarget;
     private LLResult result;
     private Telemetry telemetry;
-    private int[] unwanted;
+    private String unwanted1;
+    private String unwanted2;
     private double bestAngle;
     private Follower f;
     private int pipeline;
 
-    public Vision(HardwareMap hardwareMap, Telemetry telemetry, int[] unwanted, Follower f, int pipeline) {
-        this.unwanted = unwanted;
+    public Vision(HardwareMap hardwareMap, Telemetry telemetry, String unwanted1, String unwanted2, Follower f, int pipeline) {
+        this.unwanted1 = unwanted1;
+        this.unwanted2 = unwanted2;
         this.telemetry = telemetry;
         this.f = f;
         this.pipeline = pipeline;
@@ -64,16 +66,11 @@ public class Vision {
         List<LL3ADetection> scoredDetections = new ArrayList<>();
 
         for (LLResultTypes.DetectorResult detection : detections) {
-            int c = detection.getClassId();
+            String c = detection.getClassName();
 
             boolean colorMatch = true;
 
-            for (int o : unwanted) {
-                if (c == o) {
-                    colorMatch = false;
-                    break;
-                }
-            }
+            if (c == unwanted1 || c == unwanted2) colorMatch = false;
 
             if (colorMatch) {
                 // Compute angles

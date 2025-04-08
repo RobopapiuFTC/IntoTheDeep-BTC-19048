@@ -332,7 +332,7 @@ public class AutoBasket extends OpMode{
 
         follower = new Follower(hardwareMap, FConstants.class, LConstants.class);
         follower.setStartingPose(startPose);
-        vision = new Vision(hardwareMap,telemetry,unwanted,follower,3);
+        vision = new Vision(hardwareMap,telemetry,"none","blue",follower,1);
         buildPaths();
     }
 
