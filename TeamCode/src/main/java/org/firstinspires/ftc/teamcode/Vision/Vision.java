@@ -90,11 +90,11 @@ public class Vision {
                 telemetry.addData("Y Distance", yDistance);
 
                 // Score based on alignment
-                double rotationScore = -Math.abs((detection.getTargetCorners().get(0).get(0) -
+                /*double rotationScore = -Math.abs((detection.getTargetCorners().get(0).get(0) -
                         detection.getTargetCorners().get(1).get(0)) /
                         (detection.getTargetCorners().get(1).get(1) -
-                                detection.getTargetCorners().get(2).get(1)) - (1.5 / 3.5));
-                double score = -yDistance - Math.abs(xDistance) + 2.0 * rotationScore; // Weighted scoring
+                                detection.getTargetCorners().get(2).get(1)) - (1.5 / 3.5)); */
+                double score = -yDistance - Math.abs(xDistance); // Weighted scoring
 
                 double angle = 0;
 
@@ -102,13 +102,13 @@ public class Vision {
                     angle = Double.NaN;
                 }
 
-                List<List<Double>> corners = detection.getTargetCorners();
+//                List<List<Double>> corners = detection.getTargetCorners();
 
-                double dx = Math.toRadians(corners.get(1).get(0) - corners.get(0).get(0));
-                double dy = Math.toRadians(corners.get(2).get(1) - corners.get(0).get(1));
-                angle = ((Math.atan2(dy, dx)) * 4.5);
+               // double dx = Math.toRadians(corners.get(1).get(0) - corners.get(0).get(0));
+                //double dy = Math.toRadians(corners.get(2).get(1) - corners.get(0).get(1));
+                angle = Double.NaN;
 
-                scoredDetections.add(new LL3ADetection(detection, score, yDistance, xDistance, rotationScore, angle));
+                scoredDetections.add(new LL3ADetection(detection, score, yDistance, xDistance, 0, angle));
             }
         }
 

@@ -30,9 +30,9 @@ public class AutoBasket extends OpMode{
     private int pathState;
     hardwarePapiu robot = new hardwarePapiu(this);
 
-    private final Pose startPose = new Pose(8, 111, Math.toRadians(180));  // Starting position
-    private final Pose scorePose = new Pose(13, 130, Math.toRadians(135)); // Scoring position
-    private final Pose humanPose = new Pose(13, 24, Math.toRadians(180)); // Scoring position
+    private final Pose startPose = new Pose(8, 111, Math.toRadians(0));  // Starting position
+    private final Pose scorePose = new Pose(13, 130, Math.toRadians(315)); // Scoring position
+    private final Pose humanPose = new Pose(13, 24, Math.toRadians(0)); // Scoring position
 
     private Path scorePreload, park;
     private Pose location,target;
@@ -46,10 +46,10 @@ public class AutoBasket extends OpMode{
                 .addPath(
                         new BezierLine(
                                 new Point(13.000, 130.000, Point.CARTESIAN),
-                                new Point(13.000, 130.000, Point.CARTESIAN)
+                                new Point(15.000, 130.000, Point.CARTESIAN)
                         )
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(135), Math.toRadians(160))
+                .setLinearHeadingInterpolation(Math.toRadians(-45), Math.toRadians(-20))
                 .build();
 
 
@@ -60,7 +60,7 @@ public class AutoBasket extends OpMode{
                                 new Point(15.000, 130.000, Point.CARTESIAN)
                         )
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(160), Math.toRadians(180))
+                .setLinearHeadingInterpolation(Math.toRadians(-20), Math.toRadians(0))
                 .build();
 
         linePickup3 = follower.pathBuilder()
@@ -70,11 +70,11 @@ public class AutoBasket extends OpMode{
                                 new Point(20.000, 120.000, Point.CARTESIAN)
                         )
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(135), Math.toRadians(225))
+                .setLinearHeadingInterpolation(Math.toRadians(-45), Math.toRadians(45))
                 .build();
     }
 
-    public void autonomousPathUpdate(){
+    public void autonomousPathUpdate() throws InterruptedException{
         switch (pathState) {
             case 0:
                 follower.followPath(scorePreload);
@@ -163,7 +163,7 @@ public class AutoBasket extends OpMode{
                                             new Point(65.000, 94.000, Point.CARTESIAN)
                                     )
                             )
-                            .setLinearHeadingInterpolation(follower.getPose().getHeading(), Math.toRadians(90))
+                            .setLinearHeadingInterpolation(follower.getPose().getHeading(), Math.toRadians(-90))
                             .build();
                     //Pregatestete pentru sub 1
 
@@ -174,6 +174,7 @@ public class AutoBasket extends OpMode{
             case 8:
                 if(!follower.isBusy()) {
                     vision.find();
+                    Thread.sleep(500);
                     follower.followPath(vision.toTarget());
                     setPathState(9);
                 }
@@ -187,7 +188,7 @@ public class AutoBasket extends OpMode{
                                         new Point(13,130, Point.CARTESIAN)
                                     )
                             )
-                            .setLinearHeadingInterpolation(follower.getPose().getHeading(), Math.toRadians(135))
+                            .setLinearHeadingInterpolation(follower.getPose().getHeading(), Math.toRadians(-45))
                             .build();
                     //Comenzi pentru luat samp 1
 
@@ -204,7 +205,7 @@ public class AutoBasket extends OpMode{
                                             new Point(65.000, 94.000, Point.CARTESIAN)
                                     )
                             )
-                            .setLinearHeadingInterpolation(follower.getPose().getHeading(), Math.toRadians(90))
+                            .setLinearHeadingInterpolation(follower.getPose().getHeading(), Math.toRadians(-90))
                             .build();
                     //Comenzi pentru lasat samp 1
 
@@ -215,6 +216,7 @@ public class AutoBasket extends OpMode{
             case 11:
                 if(!follower.isBusy()) {
                     vision.find();
+                    Thread.sleep(500);
                     follower.followPath(vision.toTarget());
                 }
                 break;
@@ -227,7 +229,7 @@ public class AutoBasket extends OpMode{
                                             new Point(13,130, Point.CARTESIAN)
                                     )
                             )
-                            .setLinearHeadingInterpolation(follower.getPose().getHeading(), Math.toRadians(135))
+                            .setLinearHeadingInterpolation(follower.getPose().getHeading(), Math.toRadians(-45))
                             .build();
                     //Comenzi pentru luat samp 2
 
@@ -244,7 +246,7 @@ public class AutoBasket extends OpMode{
                                             new Point(65.000, 94.000, Point.CARTESIAN)
                                     )
                             )
-                            .setLinearHeadingInterpolation(follower.getPose().getHeading(), Math.toRadians(90))
+                            .setLinearHeadingInterpolation(follower.getPose().getHeading(), Math.toRadians(-90))
                             .build();
                     //Comenzi pentru lasat samp 2
 
@@ -255,6 +257,7 @@ public class AutoBasket extends OpMode{
             case 14:
                 if(!follower.isBusy()) {
                     vision.find();
+                    Thread.sleep(500);
                     follower.followPath(vision.toTarget());
                     setPathState(15);
                 }
@@ -268,7 +271,7 @@ public class AutoBasket extends OpMode{
                                             new Point(13,130, Point.CARTESIAN)
                                     )
                             )
-                            .setLinearHeadingInterpolation(follower.getPose().getHeading(), Math.toRadians(135))
+                            .setLinearHeadingInterpolation(follower.getPose().getHeading(), Math.toRadians(-45))
                             .build();
                     //Comenzi pentru luat samp 3
 
@@ -285,7 +288,7 @@ public class AutoBasket extends OpMode{
                                             new Point(65.000, 94.000, Point.CARTESIAN)
                                     )
                             )
-                            .setLinearHeadingInterpolation(follower.getPose().getHeading(), Math.toRadians(90))
+                            .setLinearHeadingInterpolation(follower.getPose().getHeading(), Math.toRadians(-90))
                             .build();
                     //Comenzi pentru lasat samp 3
 
@@ -309,7 +312,11 @@ public class AutoBasket extends OpMode{
     public void loop() {
 
         follower.update();
-        autonomousPathUpdate();
+        try {
+            autonomousPathUpdate();
+        } catch (InterruptedException e) {
+
+        }
         robot.poseteleop=follower.getPose();
 
         telemetry.addData("path state", pathState);
@@ -327,7 +334,7 @@ public class AutoBasket extends OpMode{
 
         follower = new Follower(hardwareMap, FConstants.class, LConstants.class);
         follower.setStartingPose(startPose);
-        vision = new Vision(hardwareMap,telemetry,"none","blue",follower,1);
+        vision = new Vision(hardwareMap,telemetry,"abc","blue",follower,1);
         buildPaths();
     }
 

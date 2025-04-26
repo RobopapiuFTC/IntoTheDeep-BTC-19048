@@ -31,7 +31,7 @@ public class AutoColor extends OpMode{
     hardwarePapiu robot = new hardwarePapiu(this);
 
     private final Pose startPose = new Pose(7, 64, Math.toRadians(0));  // Starting position
-    private final Pose scorePose = new Pose(40, 68, Math.toRadians(0)); // Scoring position
+    private final Pose scorePose = new Pose(37, 68, Math.toRadians(0)); // Scoring position
     private final Pose humanPose = new Pose(13, 24, Math.toRadians(0)); // Scoring position
 
     private Path scorePreload, park;
@@ -49,7 +49,7 @@ public class AutoColor extends OpMode{
                                 new Point(58.000, 24.000, Point.CARTESIAN)
                         )
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(90))
+                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(270))
                 .build();
 
         humanLeave1 = follower.pathBuilder()
@@ -59,7 +59,7 @@ public class AutoColor extends OpMode{
                                 new Point(16.500, 24.000, Point.CARTESIAN)
                         )
                 )
-                .setConstantHeadingInterpolation(Math.toRadians(90))
+                .setConstantHeadingInterpolation(Math.toRadians(270))
                 .build();
 
         linePickup2 = follower.pathBuilder()
@@ -70,7 +70,7 @@ public class AutoColor extends OpMode{
                                 new Point(57.700, 14.000, Point.CARTESIAN)
                         )
                 )
-                .setConstantHeadingInterpolation(Math.toRadians(90))
+                .setConstantHeadingInterpolation(Math.toRadians(270))
                 .build();
 
         humanLeave2 = follower.pathBuilder()
@@ -80,7 +80,7 @@ public class AutoColor extends OpMode{
                                 new Point(16.500, 14.000, Point.CARTESIAN)
                         )
                 )
-                .setConstantHeadingInterpolation(Math.toRadians(90))
+                .setConstantHeadingInterpolation(Math.toRadians(270))
                 .build();
         linePickup3 = follower.pathBuilder()
                 .addPath(
@@ -90,7 +90,7 @@ public class AutoColor extends OpMode{
                                 new Point(57.000, 8.000, Point.CARTESIAN)
                         )
                 )
-                .setConstantHeadingInterpolation(Math.toRadians(90))
+                .setConstantHeadingInterpolation(Math.toRadians(270))
                 .build();
 
         humanLeave3 = follower.pathBuilder()
@@ -100,7 +100,7 @@ public class AutoColor extends OpMode{
                                 new Point(17.000, 8.000, Point.CARTESIAN)
                         )
                 )
-                .setConstantHeadingInterpolation(Math.toRadians(90))
+                .setConstantHeadingInterpolation(Math.toRadians(270))
                 .build();
         humanPickup1 = follower.pathBuilder()
                 .addPath(
@@ -109,14 +109,14 @@ public class AutoColor extends OpMode{
                                 new Point(13.000, 24.000, Point.CARTESIAN)
                         )
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(0))
+                .setLinearHeadingInterpolation(Math.toRadians(270), Math.toRadians(0))
                 .build();
 
         scorePickup1 = follower.pathBuilder()
                 .addPath(
                         new BezierLine(
                                 new Point(13.000, 24.000, Point.CARTESIAN),
-                                new Point(40.000, 68.000, Point.CARTESIAN)
+                                new Point(37, 68.000, Point.CARTESIAN)
                         )
                 )
                 .setConstantHeadingInterpolation(Math.toRadians(0))
@@ -124,7 +124,7 @@ public class AutoColor extends OpMode{
         humanPickup2 = follower.pathBuilder()
                 .addPath(
                         new BezierLine(
-                                new Point(40.000, 68.000, Point.CARTESIAN),
+                                new Point(37, 68.000, Point.CARTESIAN),
                                 new Point(13.000, 24.000, Point.CARTESIAN)
                         )
                 )
@@ -135,7 +135,7 @@ public class AutoColor extends OpMode{
                 .addPath(
                         new BezierLine(
                                 new Point(13.000, 24.000, Point.CARTESIAN),
-                                new Point(40.000, 68.000, Point.CARTESIAN)
+                                new Point(37, 68.000, Point.CARTESIAN)
                         )
                 )
                 .setConstantHeadingInterpolation(Math.toRadians(0))
@@ -143,7 +143,7 @@ public class AutoColor extends OpMode{
         humanPickup3 = follower.pathBuilder()
                 .addPath(
                         new BezierLine(
-                                new Point(40.000, 68.000, Point.CARTESIAN),
+                                new Point(37, 68.000, Point.CARTESIAN),
                                 new Point(13.000, 24.000, Point.CARTESIAN)
                         )
                 )
@@ -154,7 +154,7 @@ public class AutoColor extends OpMode{
                 .addPath(
                         new BezierLine(
                                 new Point(13.000, 24.000, Point.CARTESIAN),
-                                new Point(40.000, 68.000, Point.CARTESIAN)
+                                new Point(37, 68.000, Point.CARTESIAN)
                         )
                 )
                 .setConstantHeadingInterpolation(Math.toRadians(0))
@@ -162,7 +162,7 @@ public class AutoColor extends OpMode{
         humanPickup4 = follower.pathBuilder()
                 .addPath(
                         new BezierLine(
-                                new Point(40.000, 68.000, Point.CARTESIAN),
+                                new Point(37, 68.000, Point.CARTESIAN),
                                 new Point(13.000, 24.000, Point.CARTESIAN)
                         )
                 )
@@ -173,13 +173,13 @@ public class AutoColor extends OpMode{
                 .addPath(
                         new BezierLine(
                                 new Point(13.000, 24.000, Point.CARTESIAN),
-                                new Point(40.000, 68.000, Point.CARTESIAN)
+                                new Point(37, 68.000, Point.CARTESIAN)
                         )
                 )
                 .setConstantHeadingInterpolation(Math.toRadians(0))
                 .build();
         park = new Path( new BezierLine(
-                new Point(40.000, 68.000, Point.CARTESIAN),
+                new Point(37, 68.000, Point.CARTESIAN),
                 new Point(13.000, 24.000, Point.CARTESIAN)
         ));
         park.setConstantHeadingInterpolation(Math.toRadians(0));
@@ -218,7 +218,6 @@ public class AutoColor extends OpMode{
                     setPathState(3);
                 }
                 break;
-
 
             case 3:
                 if(!follower.isBusy()) {
