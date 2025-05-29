@@ -13,6 +13,8 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.Systems.Intake;
 import org.firstinspires.ftc.teamcode.Systems.Lift;
 import org.firstinspires.ftc.teamcode.Systems.Outtake;
+import org.firstinspires.ftc.teamcode.Systems.Movement;
+
 import org.firstinspires.ftc.teamcode.pedroPathing.constants.FConstants;
 import org.firstinspires.ftc.teamcode.pedroPathing.constants.LConstants;
 
@@ -25,6 +27,7 @@ public class Robot {
     private Gamepad g1,g2;
     private Follower f;
     private Intake i;
+    private Movement m;
     private Lift l;
     private Outtake o;
     private boolean a;
@@ -48,6 +51,7 @@ public class Robot {
 
         f = new Follower(h, FConstants.class, LConstants.class);
 
+
         //l = new Lift(this.h,this.t);
         i = new Intake(this.h,this.t);
         //o = new Outtake(this.h,this.t);
@@ -61,6 +65,7 @@ public class Robot {
 
        // l.periodic();
         i.periodic();
+        m.periodic(g1);
        //
         // o.periodic();
         t.update();
@@ -70,6 +75,7 @@ public class Robot {
         intake();
         run();
        // l.periodic();
+        m.periodic(g1);
         i.periodic();
        // o.periodic();
         t.update();
@@ -86,13 +92,6 @@ public class Robot {
 
     public void dualControls() {
 
-        if (g1.right_bumper)
-            speed = 1;
-        else if (g1.left_bumper)
-            speed = 0.25;
-        else
-            speed = 0.9;
-
         if (g1.dpad_up){
             setIntakeState(0);
         }
@@ -100,8 +99,6 @@ public class Robot {
             rotation(da);
             da=!da;
         }
-
-        f.setTeleOpMovementVectors(flip * -g1.left_stick_y * speed, flip * -g1.left_stick_x * speed, -g1.right_stick_x * speed * 0.5, r);
     }
 
     public HardwareMap getH() {
@@ -216,27 +213,25 @@ public class Robot {
             if(a){
                 if (b ==true || y==true) {
 
-                   if(need) {
-                       iTimer.resetTimer();
-                       i.latch.setPosition(0.8);
-                   }
+                    if(need) {
+                        iTimer.resetTimer();
+                        i.latch.setPosition(0.8);
+                    }
                     need=false;
                     if (iTimer.getElapsedTimeSeconds()>= 0.3 && iTimer.getElapsedTimeSeconds()<0.8) {
                         i.intake.setDirection(DcMotorSimple.Direction.FORWARD);
                         i.intake.setPower(0.38);
                     }
-                    if (iTimer.getElapsedTimeSeconds() >= 0.8 && iTimer.getElapsedTimeSeconds()<1) {
+                    if (iTimer.getElapsedTimeSeconds() >= 0.8 && iTimer.getElapsedTimeSeconds()<1.1) {
+                        i.transfer();
                         i.intake.setDirection(DcMotorSimple.Direction.REVERSE);
                         i.intake.setPower(0.38);
                     }
-                    if (iTimer.getElapsedTimeSeconds() >= 1 && iTimer.getElapsedTimeSeconds()<1.1) {
+                    if (iTimer.getElapsedTimeSeconds() >= 1.1 && iTimer.getElapsedTimeSeconds() <=1.2) {
                         i.intake.setPower(0);
                     }
-                    if (iTimer.getElapsedTimeSeconds() >= 1.1 && iTimer.getElapsedTimeSeconds() <=1.2) {
-                        i.latch.setPosition(0.3);
-                    }
                     if(iTimer.getElapsedTimeSeconds() >=1.2){
-                        i.transfer();
+                        i.latch.setPosition(0.3);
                         running = false;
                         r=false;
                         b=false;
@@ -251,7 +246,7 @@ public class Robot {
                     b=false;
                     y=false;
                 }
-            } else{
+            } else {
                 if (r || y) {
 
                     if(need) {
@@ -263,18 +258,16 @@ public class Robot {
                         i.intake.setDirection(DcMotorSimple.Direction.FORWARD);
                         i.intake.setPower(0.38);
                     }
-                    if (iTimer.getElapsedTimeSeconds() >= 0.8 && iTimer.getElapsedTimeSeconds()<1) {
+                    if (iTimer.getElapsedTimeSeconds() >= 0.8 && iTimer.getElapsedTimeSeconds()<1.1) {
+                        i.transfer();
                         i.intake.setDirection(DcMotorSimple.Direction.REVERSE);
                         i.intake.setPower(0.38);
                     }
-                    if (iTimer.getElapsedTimeSeconds() >= 1 && iTimer.getElapsedTimeSeconds()<1.1) {
+                    if (iTimer.getElapsedTimeSeconds() >= 1.1 && iTimer.getElapsedTimeSeconds() <=1.2) {
                         i.intake.setPower(0);
                     }
-                    if (iTimer.getElapsedTimeSeconds() >= 1.1 && iTimer.getElapsedTimeSeconds() <=1.2) {
-                        i.latch.setPosition(0.3);
-                    }
                     if(iTimer.getElapsedTimeSeconds() >=1.2){
-                        i.transfer();
+                        i.latch.setPosition(0.3);
                         running = false;
                         r=false;
                         b=false;
@@ -292,5 +285,6 @@ public class Robot {
             }
         }
     }
+
 
 }
