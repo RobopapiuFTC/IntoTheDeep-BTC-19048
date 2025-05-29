@@ -37,7 +37,7 @@ public class Robot {
     public Pose s = new Pose();
     public double speed = 0.9;
     public Timer iTimer,rTimer;
-    public boolean da=false,r,y,b,need=false,running = false;
+    public boolean da=true,r,y,b,need=false,running = false;
     public int flip = 1, iState = -1;
     private boolean aInitLoop, frontScore = false, backScore = true, automationActive = false;
 
@@ -96,8 +96,8 @@ public class Robot {
             setIntakeState(0);
         }
         if(g1.y){
+            if(rTimer.getElapsedTimeSeconds()>0.3)da=!da;
             rotation(da);
-            da=!da;
         }
     }
 
@@ -170,7 +170,7 @@ public class Robot {
         }
     }
     public void rotation(boolean da){
-        if(rTimer.getElapsedTimeSeconds()>0.2)
+        if(rTimer.getElapsedTimeSeconds()>0.3)
             if(da){
                 i.transfer();
                 rTimer.resetTimer();
