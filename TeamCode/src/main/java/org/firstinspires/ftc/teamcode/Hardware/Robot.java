@@ -254,7 +254,7 @@ public class Robot {
 
                     if(need) {
                         iTimer.resetTimer();
-                        i.latch.setPosition(0.7);
+                        i.latch.setPosition(0.8);
                         if(r)g1.rumble(1,0,200);
                         else g1.rumble(0,1,500);
                     }
