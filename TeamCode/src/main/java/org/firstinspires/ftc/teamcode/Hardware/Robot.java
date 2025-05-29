@@ -189,7 +189,7 @@ public class Robot {
         if (need || running){
            if(need) {
                i.intake.setDirection(DcMotorSimple.Direction.REVERSE);
-               i.intake.setPower(0.8);
+               i.intake.setPower(0.7);
                i.latch.setPosition(0.3);
            }
             red = i.colorSensor.red();
@@ -216,6 +216,8 @@ public class Robot {
                     if(need) {
                         iTimer.resetTimer();
                         i.latch.setPosition(0.8);
+                        if(b)g1.rumble(1,0,200);
+                        else g1.rumble(0,1,500);
                     }
                     need=false;
                     if (iTimer.getElapsedTimeSeconds()>= 0.3 && iTimer.getElapsedTimeSeconds()<0.8) {
@@ -225,7 +227,7 @@ public class Robot {
                     if (iTimer.getElapsedTimeSeconds() >= 0.8 && iTimer.getElapsedTimeSeconds()<1.1) {
                         i.transfer();
                         i.intake.setDirection(DcMotorSimple.Direction.REVERSE);
-                        i.intake.setPower(0.38);
+                        i.intake.setPower(0.5);
                     }
                     if (iTimer.getElapsedTimeSeconds() >= 1.1 && iTimer.getElapsedTimeSeconds() <=1.2) {
                         i.intake.setPower(0);
@@ -241,6 +243,7 @@ public class Robot {
                     need=false;
                     i.intake.setDirection(DcMotorSimple.Direction.FORWARD);
                     i.intake.setPower(0.38);
+                    g1.rumble(1,1,200);
                     running = false;
                     r=false;
                     b=false;
@@ -251,7 +254,9 @@ public class Robot {
 
                     if(need) {
                         iTimer.resetTimer();
-                        i.latch.setPosition(0.8);
+                        i.latch.setPosition(0.7);
+                        if(r)g1.rumble(1,0,200);
+                        else g1.rumble(0,1,500);
                     }
                     need=false;
                     if (iTimer.getElapsedTimeSeconds()>= 0.3 && iTimer.getElapsedTimeSeconds()<0.8) {
@@ -261,7 +266,7 @@ public class Robot {
                     if (iTimer.getElapsedTimeSeconds() >= 0.8 && iTimer.getElapsedTimeSeconds()<1.1) {
                         i.transfer();
                         i.intake.setDirection(DcMotorSimple.Direction.REVERSE);
-                        i.intake.setPower(0.38);
+                        i.intake.setPower(0.5);
                     }
                     if (iTimer.getElapsedTimeSeconds() >= 1.1 && iTimer.getElapsedTimeSeconds() <=1.2) {
                         i.intake.setPower(0);
@@ -277,6 +282,7 @@ public class Robot {
                     need=false;
                     i.intake.setDirection(DcMotorSimple.Direction.FORWARD);
                     i.intake.setPower(0.38);
+                    g1.rumble(1,1,200);
                     running = false;
                     r=false;
                     b=false;
