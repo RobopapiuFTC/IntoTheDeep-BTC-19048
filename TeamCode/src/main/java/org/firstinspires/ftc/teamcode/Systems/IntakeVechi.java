@@ -1,12 +1,10 @@
 package org.firstinspires.ftc.teamcode.Systems;
 
-import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.robotcore.hardware.ColorSensor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.rowanmcalpin.nextftc.core.Subsystem;
 import com.rowanmcalpin.nextftc.core.command.Command;
 import com.rowanmcalpin.nextftc.core.control.controllers.PIDFController;
 import com.rowanmcalpin.nextftc.core.control.controllers.feedforward.StaticFeedforward;
@@ -15,111 +13,58 @@ import com.rowanmcalpin.nextftc.ftc.hardware.ServoToPosition;
 import com.rowanmcalpin.nextftc.ftc.hardware.controllables.MotorEx;
 import com.rowanmcalpin.nextftc.ftc.hardware.controllables.RunToPosition;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
+public class IntakeVechi extends Subsystem {
+    // BOILERPLATE
+    public static final IntakeVechi INSTANCE = new IntakeVechi();
+    private IntakeVechi() {
 
-public class Intake {
-    public DcMotorEx intake,misumi;
+    }
+
+    // USER CODE
+    public MotorEx intake,misumi;
     public Servo intake1,intake2,latch;
     public ColorSensor colorSensor;
-    public int pidLevel=0;
-    public static int target=0;
-    public PIDController pid;
-    public Telemetry telemetry;
-
-    public boolean r,y,b;
-    public int pos;
-    public static double p = 0.01, i = 0, d = 0.00000000000005, f = 0.05;
+    public PIDFController controller = new PIDFController(0.005, 0.0, 0.0, new StaticFeedforward(0.0));
     public static double down=0.0,low=200.0,high=500.0;
     public static double red,blue,green;
-    public Intake(HardwareMap hardwareMap, Telemetry telemetry){
-        colorSensor = hardwareMap.get(ColorSensor.class, "colorSensor");
-        intake1 = hardwareMap.get(Servo.class, "intake1");
-        intake2 = hardwareMap.get(Servo.class, "intake2");
-        intake = hardwareMap.get(DcMotorEx.class, "intake");
-        misumi = hardwareMap.get(DcMotorEx.class, "misumi");
-        latch = hardwareMap.get(Servo.class, "latch");
-        intake.setDirection(DcMotorSimple.Direction.REVERSE);
+    public Command toDown() {
+        return new RunToPosition(
+                misumi, // MOTOR TO MOVE
+                down, // TARGET POSITION, IN TICKS
+                controller, // CONTROLLER TO IMPLEMENT
+                this); // IMPLEMENTED SUBSYSTEM
     }
-    public void update() {
-        if(pidLevel == 1) {
-            misumi.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
-
-            double pid_output = pid.calculate(getPos(), target);
-            double power = pid_output + f;
-
-            if (getPos() < 50 && target < 50) {
-                misumi.setPower(0);
-            } else {
-                misumi.setPower(power);
-            }
-        } else if (pidLevel == 2){
-            target = getPos();
-            misumi.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-        } else {
-            target = getPos();
-            misumi.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-            misumi.setPower(0);
-        }
+    public Command toLow() {
+        return new RunToPosition(
+                misumi, // MOTOR TO MOVE
+                low, // TARGET POSITION, IN TICKS
+                controller, // CONTROLLER TO IMPLEMENT
+                this); // IMPLEMENTED SUBSYSTEM
     }
-    public void setTarget(int b) {
-        pidLevel = 1;
-        target = b;
+    public Command toHigh() {
+        return new RunToPosition(
+                misumi, // MOTOR TO MOVE
+                high, // TARGET POSITION, IN TICKS
+                controller, // CONTROLLER TO IMPLEMENT
+                this); // IMPLEMENTED SUBSYSTEM
     }
-
-    public int getPos() {
-        pos = misumi.getCurrentPosition();
-        return misumi.getCurrentPosition();
-    }
-
-    public void init() {
-        pid.setPID(p,i,d);
-    }
-
-    public void start() {
-        target = 0;
-    }
-
-    public void toDown() {
-        setTarget(1);
-    }
-    public void toHigh() {
-        setTarget(200);
-    }
-
-    public boolean roughlyAtTarget() {
-        return Math.abs(getPos() - target) < 25;
-    }
-
-    public boolean halfwayToTarget() {
-        return Math.abs(getPos() - target) < target/2;
-    }
-
-    public void pidOn() {
-        pidLevel = 1;
-    }
-
-    public void pidOff() {
-        pidLevel = 2;
-    }
-
-    public void telemetry() {
-    }
-
-    public void periodic() {
-        //color();
-       // update();
-        telemetry();
-    }
-    public void ground(){
+    public Command ground(){
         intake1.setPosition(0.3);
-        intake2.setPosition(0.7);
+        return new ServoToPosition(
+                intake2,
+                0.7,
+                this
+        );
     };
-    public void transfer(){
+    public Command transfer(){
         intake1.setPosition(0.5);
-        intake2.setPosition(0.5);
+        return new ServoToPosition(
+                intake2,
+                0.5,
+                this
+        );
     };
-
-    /*public void run(String color){
+    public Command run(String color, Command driverControlled){
         ElapsedTime timer = new ElapsedTime();
         int ok=0;
         red = colorSensor.red();
@@ -129,8 +74,8 @@ public class Intake {
         intake.setPower(0.8);
         latch.setPosition(0.3);
         if(color == "blue")//1 pt blue 0 pt red daca int si dai numa if(color)
-        {
-            while (ok != 1) {
+             {
+            while (ok != 1) {        driverControlled.invoke();
                 red = colorSensor.red();
                 blue = colorSensor.blue();
                 green = colorSensor.green();
@@ -155,7 +100,7 @@ public class Intake {
                             latch.setPosition(0.3);
                         }
                     }
-                    this.toDown();
+                    return this.toDown();
                 } else if (red >= 500 && blue <= 500 && green <= 500) {
                     ok=1;
                     intake.setDirection(DcMotorSimple.Direction.FORWARD);
@@ -163,7 +108,7 @@ public class Intake {
                 }
             }
         }else {
-            while (ok != 1) {
+            while (ok != 1) {        driverControlled.invoke();
                 red = colorSensor.red();
                 blue = colorSensor.blue();
                 green = colorSensor.green();
@@ -187,7 +132,7 @@ public class Intake {
                             latch.setPosition(0.3);
                         }
                     }
-                    this.toDown();
+                    return this.toDown();
                 } else if (red <= 500 && blue >= 500 && green <= 500) {
                     ok=1;
                     intake.setDirection(DcMotorSimple.Direction.FORWARD);
@@ -195,24 +140,17 @@ public class Intake {
                 }
             }
         }
-        this.transfer();
-    }; */
-    public void color(){
-        red = colorSensor.red();
-        blue = colorSensor.blue();
-        green = colorSensor.green();
-        if (red >= 500 && blue <= 500 && green <= 500) {
-            b=false;
-            r=true;
-            y=false;
-        } else if(red >= 500 && blue <= 500 && green >= 500){
-            b=false;
-            r=false;
-            y=true;
-        }else if (red <= 500 && blue >= 500 && green <= 500) {
-            b=true;
-            y=false;
-            r=false;
-        }
+        return this.transfer();
+    };
+
+    @Override
+    public void initialize() {
+        colorSensor = OpModeData.INSTANCE.getHardwareMap().get(ColorSensor.class, "colorSensor");
+        intake1 = OpModeData.INSTANCE.getHardwareMap().get(Servo.class, "intake1");
+        intake2 = OpModeData.INSTANCE.getHardwareMap().get(Servo.class, "intake2");
+        intake = new MotorEx("intakem");
+        misumi = new MotorEx("misumi");
+        latch = OpModeData.INSTANCE.getHardwareMap().get(Servo.class, "latch");
+        intake.setDirection(DcMotorSimple.Direction.REVERSE);
     }
 }

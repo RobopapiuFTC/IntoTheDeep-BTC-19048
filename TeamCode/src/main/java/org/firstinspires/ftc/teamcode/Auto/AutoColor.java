@@ -12,7 +12,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.Vision.Vision;
 
-import org.firstinspires.ftc.teamcode.Hardware.hardwarePapiu;
+import org.firstinspires.ftc.teamcode.Hardware.Robot;
 import org.firstinspires.ftc.teamcode.pedroPathing.constants.FConstants;
 import org.firstinspires.ftc.teamcode.pedroPathing.constants.LConstants;
 
@@ -28,7 +28,6 @@ public class AutoColor extends OpMode{
     private int[] unwanted;
     private Timer pathTimer, actionTimer, opmodeTimer;
     private int pathState;
-    hardwarePapiu robot = new hardwarePapiu(this);
 
     private final Pose startPose = new Pose(7, 64, Math.toRadians(0));  // Starting position
     private final Pose scorePose = new Pose(37, 68, Math.toRadians(0)); // Scoring position
@@ -341,7 +340,7 @@ public class AutoColor extends OpMode{
         } catch (InterruptedException e) {
 
         }
-        robot.poseteleop=follower.getPose();
+       // robot.poseteleop=follower.getPose();
 
         telemetry.addData("path state", pathState);
         telemetry.addData("x", follower.getPose().getX());

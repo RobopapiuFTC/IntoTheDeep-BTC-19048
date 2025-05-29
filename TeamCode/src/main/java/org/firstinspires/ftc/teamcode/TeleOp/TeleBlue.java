@@ -1,50 +1,29 @@
 package org.firstinspires.ftc.teamcode.TeleOp;
 
+
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.rowanmcalpin.nextftc.core.command.Command;
-import com.rowanmcalpin.nextftc.core.command.CommandManager;
-import com.rowanmcalpin.nextftc.core.command.groups.SequentialGroup;
-import com.rowanmcalpin.nextftc.ftc.NextFTCOpMode;
-import com.rowanmcalpin.nextftc.pedro.DriverControlled;
 
-import org.firstinspires.ftc.teamcode.Hardware.hardwarePapiu;
-import org.firstinspires.ftc.teamcode.Systems.Intake;
+import org.firstinspires.ftc.teamcode.Hardware.Robot;
 
-@TeleOp(name = "TeleBlue")
-public class TeleBlue extends NextFTCOpMode {
-    public Command driverControlled;
-    public TeleBlue() {
-        super(Intake.INSTANCE);
-    }
-    hardwarePapiu robot = new hardwarePapiu(this);
+@TeleOp(name = "TeleBlue", group = "...Sigma")
+public class TeleBlue extends OpMode {
+
+    Robot r;
 
     @Override
-    public void onInit() {
-        robot.init();
+    public void init() {
+        r = new Robot(hardwareMap, telemetry, gamepad1 , gamepad2, false,true);
     }
 
     @Override
-    public void onStartButtonPressed() {
-        CommandManager.INSTANCE.scheduleCommand(new DriverControlled(gamepadManager.getGamepad1(), true));
-        gamepadManager.getGamepad1().getDpadUp().setPressedCommand(
-                () -> {
-                    try {
-                        return new SequentialGroup(
-                                Intake.INSTANCE.toHigh(),
-                                Intake.INSTANCE.ground().afterTime(0.5),
-                                Intake.INSTANCE.run("blue").afterTime(0.1)
-                        );
-                    } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
-                    }
-                }
-        );
+    public void start() {
+        r.tStart();
     }
 
     @Override
-    public void onUpdate(){
-        if(opModeIsActive()){
-
-        }
+    public void loop() {
+        r.dualControls();
+        r.tPeriodic();
     }
 }
