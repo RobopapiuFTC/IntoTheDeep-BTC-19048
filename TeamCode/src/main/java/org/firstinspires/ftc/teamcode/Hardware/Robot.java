@@ -225,9 +225,9 @@ public class Robot {
                         i.intake.setPower(0.38);
                     }
                     if (iTimer.getElapsedTimeSeconds() >= 0.8 && iTimer.getElapsedTimeSeconds()<1.1) {
-                        i.transfer();
                         i.intake.setDirection(DcMotorSimple.Direction.REVERSE);
                         i.intake.setPower(0.5);
+                        i.transfer();
                     }
                     if (iTimer.getElapsedTimeSeconds() >= 1.1 && iTimer.getElapsedTimeSeconds() <=1.2) {
                         i.intake.setPower(0);
@@ -264,9 +264,9 @@ public class Robot {
                         i.intake.setPower(0.38);
                     }
                     if (iTimer.getElapsedTimeSeconds() >= 0.8 && iTimer.getElapsedTimeSeconds()<1.1) {
-                        i.transfer();
                         i.intake.setDirection(DcMotorSimple.Direction.REVERSE);
                         i.intake.setPower(0.5);
+                        i.transfer();
                     }
                     if (iTimer.getElapsedTimeSeconds() >= 1.1 && iTimer.getElapsedTimeSeconds() <=1.2) {
                         i.intake.setPower(0);
