@@ -55,10 +55,11 @@ public class Robot {
         //l = new Lift(this.h,this.t);
         i = new Intake(this.h,this.t);
         //o = new Outtake(this.h,this.t);
-
+        m = new Movement(this.h,this.t);
         iTimer = new Timer();
         rTimer = new Timer();
-
+        i.intake1.setPosition(0.5);
+        i.intake2.setPosition(0.5);
     }
 
     public void aPeriodic() {
@@ -95,10 +96,17 @@ public class Robot {
         if (g1.dpad_up){
             setIntakeState(0);
         }
+        if(g1.dpad_right)i.toHigh();
         if(g1.y){
             if(rTimer.getElapsedTimeSeconds()>0.3)da=!da;
             rotation(da);
         }
+        if(g1.b){
+            i.intake.setPower(0);
+            need=false;
+            running=false;
+        }
+        if(g1.dpad_down)i.toDown();
     }
 
     public HardwareMap getH() {
@@ -159,7 +167,7 @@ public class Robot {
 
         switch(iState){
             case 0:
-                //i.toHigh();
+                i.toHigh();
                 setIntakeState(1);
                 break;
             case 1:
@@ -220,14 +228,16 @@ public class Robot {
                         else g1.rumble(0,1,500);
                     }
                     need=false;
-                    if (iTimer.getElapsedTimeSeconds()>= 0.3 && iTimer.getElapsedTimeSeconds()<0.8) {
+                    if (iTimer.getElapsedTimeSeconds() >= 0.2 && iTimer.getElapsedTimeSeconds()<0.4) {
+                        i.transfer();
+                    }
+                    if (iTimer.getElapsedTimeSeconds()>= 0.4 && iTimer.getElapsedTimeSeconds()<0.8) {
                         i.intake.setDirection(DcMotorSimple.Direction.FORWARD);
                         i.intake.setPower(0.38);
                     }
                     if (iTimer.getElapsedTimeSeconds() >= 0.8 && iTimer.getElapsedTimeSeconds()<1.1) {
                         i.intake.setDirection(DcMotorSimple.Direction.REVERSE);
                         i.intake.setPower(0.5);
-                        i.transfer();
                     }
                     if (iTimer.getElapsedTimeSeconds() >= 1.1 && iTimer.getElapsedTimeSeconds() <=1.2) {
                         i.intake.setPower(0);
@@ -238,6 +248,8 @@ public class Robot {
                         r=false;
                         b=false;
                         y=false;
+                        da=true;
+                        i.toDown();
                     }
                 } else if (r == true) {
                     need=false;
@@ -277,6 +289,8 @@ public class Robot {
                         r=false;
                         b=false;
                         y=false;
+                        da=true;
+                        i.toDown();
                     }
                 } else if (b) {
                     need=false;

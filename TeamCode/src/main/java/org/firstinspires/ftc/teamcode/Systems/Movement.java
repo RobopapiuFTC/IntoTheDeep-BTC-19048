@@ -11,6 +11,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class Movement {
     public DcMotorEx leftFront,leftRear,rightFront,rightRear;
+
     public Movement(HardwareMap hardwareMap, Telemetry telemetry){
         leftFront = hardwareMap.get(DcMotorEx.class, "leftFront");
         leftRear = hardwareMap.get(DcMotorEx.class, "leftRear");
@@ -22,8 +23,8 @@ public class Movement {
         rightFront.setDirection(DcMotorSimple.Direction.FORWARD);
         rightRear.setDirection(DcMotorSimple.Direction.FORWARD);
     }
-    public void periodic(Gamepad gamepad1) {
-        movement(gamepad1);
+    public void periodic(Gamepad gamepad) {
+        movement(gamepad);
     }
     public void movement(Gamepad gamepad1){
         double drive = -gamepad1.left_stick_y; // Remember, Y stick is reversed!

@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.Systems;
 
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.robotcore.hardware.ColorSensor;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -39,15 +40,20 @@ public class Intake {
         misumi = hardwareMap.get(DcMotorEx.class, "misumi");
         latch = hardwareMap.get(Servo.class, "latch");
         intake.setDirection(DcMotorSimple.Direction.REVERSE);
+        misumi.setDirection(DcMotorSimple.Direction.REVERSE);
+        misumi.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        misumi.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        pid = new PIDController(p , i , d);
     }
     public void update() {
         if(pidLevel == 1) {
+            pid.setPID(p,i,d);
             misumi.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
 
             double pid_output = pid.calculate(getPos(), target);
             double power = pid_output + f;
 
-            if (getPos() < 50 && target < 50) {
+            if (getPos() < 5 && target < 5) {
                 misumi.setPower(0);
             } else {
                 misumi.setPower(power);
@@ -80,10 +86,13 @@ public class Intake {
     }
 
     public void toDown() {
-        setTarget(1);
+        setTarget(0);
+    }
+    public void toLow() {
+        setTarget(50);
     }
     public void toHigh() {
-        setTarget(200);
+        setTarget(150);
     }
 
     public boolean roughlyAtTarget() {
@@ -107,7 +116,7 @@ public class Intake {
 
     public void periodic() {
         //color();
-       // update();
+        update();
         telemetry();
     }
     public void ground(){
