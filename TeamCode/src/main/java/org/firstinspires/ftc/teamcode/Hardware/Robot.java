@@ -11,14 +11,11 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 import org.firstinspires.ftc.teamcode.Systems.Intake;
-import org.firstinspires.ftc.teamcode.Systems.Lift;
 import org.firstinspires.ftc.teamcode.Systems.Outtake;
 import org.firstinspires.ftc.teamcode.Systems.Movement;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.constants.FConstants;
 import org.firstinspires.ftc.teamcode.pedroPathing.constants.LConstants;
-
-import java.util.Objects;
 
 public class Robot {
     private HardwareMap h;
@@ -28,7 +25,6 @@ public class Robot {
     private Follower f;
     private Intake i;
     private Movement m;
-    private Lift l;
     private Outtake o;
     private boolean a;
     private boolean ro = true;
@@ -51,10 +47,8 @@ public class Robot {
 
         f = new Follower(h, FConstants.class, LConstants.class);
 
-
-        //l = new Lift(this.h,this.t);
         i = new Intake(this.h,this.t);
-        //o = new Outtake(this.h,this.t);
+        o = new Outtake(this.h,this.t);
         m = new Movement(this.h,this.t);
         iTimer = new Timer();
         rTimer = new Timer();
@@ -63,22 +57,18 @@ public class Robot {
     }
 
     public void aPeriodic() {
-
-       // l.periodic();
         i.periodic();
         m.periodic(g1);
-       //
-        // o.periodic();
+        o.periodic();
         t.update();
     }
 
     public void tPeriodic() {
         intake();
         run();
-       // l.periodic();
         m.periodic(g1);
         i.periodic();
-       // o.periodic();
+        o.periodic();
         t.update();
     }
 
@@ -95,6 +85,15 @@ public class Robot {
 
         if (g1.dpad_up){
             setIntakeState(0);
+        }
+        if(g1.dpad_right)i.toHigh();
+        if(g1.dpad_up && g1.left_bumper){
+            o.needT=true;
+            o.needH=true;
+        }
+        if(g1.dpad_up && g1.left_bumper){
+            o.needT=true;
+            o.needL=true;
         }
         if(g1.dpad_right)i.toHigh();
         if(g1.y){

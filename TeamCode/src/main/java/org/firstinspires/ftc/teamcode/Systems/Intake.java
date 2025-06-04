@@ -53,7 +53,7 @@ public class Intake {
             double pid_output = pid.calculate(getPos(), target);
             double power = pid_output + f;
 
-            if (getPos() < 5 && target < 5) {
+            if (getPos() < 1 && target < 1) {
                 misumi.setPower(0);
             } else {
                 misumi.setPower(power);
