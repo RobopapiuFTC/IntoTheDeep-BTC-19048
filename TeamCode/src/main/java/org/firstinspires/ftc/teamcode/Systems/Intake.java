@@ -53,7 +53,7 @@ public class Intake {
             double pid_output = pid.calculate(getPos(), target);
             double power = pid_output + f;
 
-            if (getPos() < 1 && target < 1) {
+            if (getPos() < 10 && target < 1) {
                 misumi.setPower(0);
             } else {
                 misumi.setPower(power);
@@ -92,7 +92,7 @@ public class Intake {
         setTarget(50);
     }
     public void toHigh() {
-        setTarget(150);
+        setTarget(600);
     }
 
     public boolean roughlyAtTarget() {
@@ -120,8 +120,8 @@ public class Intake {
         telemetry();
     }
     public void ground(){
-        intake1.setPosition(0.3);
-        intake2.setPosition(0.7);
+        intake1.setPosition(0.65);
+        intake2.setPosition(0.35);
     };
     public void transfer(){
         intake1.setPosition(0.5);

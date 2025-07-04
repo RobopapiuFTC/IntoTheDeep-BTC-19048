@@ -33,7 +33,7 @@ public class Robot {
     public Pose s = new Pose();
     public double speed = 0.9;
     public Timer iTimer,rTimer;
-    public boolean da=true,r,y,b,need=false,running = false;
+    public boolean da=true,r,y,b,need=false,running = false,ts=false;
     public int flip = 1, iState = -1;
     private boolean aInitLoop, frontScore = false, backScore = true, automationActive = false;
 
@@ -83,29 +83,40 @@ public class Robot {
 
     public void dualControls() {
 
-        if (g1.dpad_up){
+        if (g1.dpad_up && !g1.left_bumper){
             setIntakeState(0);
         }
         if(g1.dpad_right)i.toHigh();
-        if(g1.dpad_up && g1.left_bumper){
-            o.needT=true;
-            o.needH=true;
+       if(g1.dpad_up && g1.left_bumper){
+            o.targetHigh();
         }
-        if(g1.dpad_up && g1.left_bumper){
-            o.needT=true;
-            o.needL=true;
+        if(g1.dpad_down && g1.left_bumper){
+            o.toDown();
         }
-        if(g1.dpad_right)i.toHigh();
-        if(g1.y){
+        if(g1.dpad_right && !g1.left_bumper)i.toHigh();
+        if(g1.y && !g1.left_bumper){
             if(rTimer.getElapsedTimeSeconds()>0.3)da=!da;
             rotation(da);
         }
-        if(g1.b){
+        if(g1.a && !g1.left_bumper){
+            o.needTS = true;
+            o.needS = true;
+        }
+        if(g1.b && !g1.left_bumper){
+            o.needTSL = true;
+            o.needSL = true;
+        }
+        if(g1.a && g1.left_bumper){
+            o.claw.setPosition(0.5);
+            o.rotate.setPosition(0.5);
+        }
+        if(g1.x && g1.left_bumper)o.claw.setPosition(0.75);
+        /*if(g1.b){
             i.intake.setPower(0);
             need=false;
             running=false;
-        }
-        if(g1.dpad_down)i.toDown();
+        } */
+        if(g1.dpad_down && !g1.left_bumper)i.toDown();
     }
 
     public HardwareMap getH() {
@@ -186,6 +197,20 @@ public class Robot {
                 rTimer.resetTimer();
             }
     }
+    public void spec(boolean baw){
+        if(o.timerS.getElapsedTimeSeconds()>0.5 || o.timerSL.getElapsedTimeSeconds()>0.5) {
+            if (baw) {
+                o.needTS = true;
+                o.needS = true;
+                ts=!ts;
+            } else {
+                o.needTSL = true;
+                o.needSL = true;
+                ts=!ts;
+            }
+        }
+
+    }
     public void run(){
         t.addData("Need State", need);
         t.addData("Run State", running);
@@ -238,17 +263,17 @@ public class Robot {
                         i.intake.setDirection(DcMotorSimple.Direction.REVERSE);
                         i.intake.setPower(0.5);
                     }
-                    if (iTimer.getElapsedTimeSeconds() >= 1.1 && iTimer.getElapsedTimeSeconds() <=1.2) {
-                        i.intake.setPower(0);
-                    }
-                    if(iTimer.getElapsedTimeSeconds() >=1.2){
+                    if(iTimer.getElapsedTimeSeconds() >=1.2 && iTimer.getElapsedTimeSeconds()<1.6){
                         i.latch.setPosition(0.3);
+                        i.toDown();
+                    }
+                    if(iTimer.getElapsedTimeSeconds()>=1.6){
+                        i.intake.setPower(0);
                         running = false;
                         r=false;
                         b=false;
                         y=false;
                         da=true;
-                        i.toDown();
                     }
                 } else if (r == true) {
                     need=false;
@@ -279,17 +304,17 @@ public class Robot {
                         i.intake.setPower(0.5);
                         i.transfer();
                     }
-                    if (iTimer.getElapsedTimeSeconds() >= 1.1 && iTimer.getElapsedTimeSeconds() <=1.2) {
-                        i.intake.setPower(0);
-                    }
-                    if(iTimer.getElapsedTimeSeconds() >=1.2){
+                    if(iTimer.getElapsedTimeSeconds() >=1.2 && iTimer.getElapsedTimeSeconds()<1.6){
                         i.latch.setPosition(0.3);
+                        i.toDown();
+                    }
+                    if(iTimer.getElapsedTimeSeconds()>=1.6){
+                        i.intake.setPower(0);
                         running = false;
                         r=false;
                         b=false;
                         y=false;
                         da=true;
-                        i.toDown();
                     }
                 } else if (b) {
                     need=false;

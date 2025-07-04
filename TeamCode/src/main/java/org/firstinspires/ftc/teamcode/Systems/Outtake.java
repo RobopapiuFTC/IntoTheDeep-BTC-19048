@@ -17,6 +17,7 @@ import com.rowanmcalpin.nextftc.ftc.hardware.ServoToPosition;
 import com.rowanmcalpin.nextftc.ftc.hardware.controllables.MotorEx;
 import com.rowanmcalpin.nextftc.ftc.hardware.controllables.RunToPosition;
 
+import org.apache.commons.math3.linear.RealVector;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class Outtake {
@@ -32,8 +33,8 @@ public class Outtake {
     public static double p = 0.01, i = 0, d = 0.00000000000005, f = 0.05;
     public static double down=0.0,low=200.0,high=500.0;
     public static double red,blue,green;
-    public boolean needL=false,needH=false,needT=true;
-    public static Timer timerL,timerH;
+    public boolean needL=false,needH=false,needT=true,needS=false,needSL=false,needTS=false,needTSL=false;
+    public Timer timerL,timerH,timerS,timerSL;
     public Outtake(HardwareMap hardwareMap, Telemetry telemetry){
         outtake1 = hardwareMap.get(Servo.class, "outtake1");
         outtake2 = hardwareMap.get(Servo.class, "outtake2");
@@ -44,14 +45,18 @@ public class Outtake {
         //Go in init in robot or auto prob
         timerL= new Timer();
         timerH= new Timer();
-        outtake1.setPosition(0.1);
-        outtake2.setPosition(0.9);
-        claw.setPosition(0.5);
-        rotate.setPosition(0.5);
-        lift2.setDirection(DcMotorSimple.Direction.REVERSE);
+        timerS= new Timer();
+        timerSL= new Timer();
+        outtake1.setPosition(0.35);
+        outtake2.setPosition(0.35);
+        claw.setPosition(0.75);
+        rotate.setPosition(0.1);
         lift1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         lift1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        lift2.setDirection(DcMotorSimple.Direction.REVERSE);
         lift2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        pid = new PIDController(p , i , d);
 
     }
     public void update() {
@@ -62,7 +67,7 @@ public class Outtake {
             double pid_output = pid.calculate(getPos(), target);
             double power = pid_output + f;
 
-            if (getPos() < 10 && target < 10) {
+            if (getPos() < 20 && target < 20) {
                 lift1.setPower(0);
                 lift2.setPower(0);
             } else {
@@ -78,7 +83,7 @@ public class Outtake {
             lift1.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
             lift2.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
             lift1.setPower(0);
-            lift2.setPower(0);
+           lift2.setPower(0);
 
         }
     }
@@ -103,6 +108,7 @@ public class Outtake {
     public void toDown() {
         setTarget(0);
     }
+    public void toSpec(){setTarget(1280);}
     public void targetTransfer(){
         setTarget(30);
     }
@@ -110,7 +116,7 @@ public class Outtake {
         setTarget(100);
     }
     public void targetHigh(){
-        setTarget(500);
+        setTarget(1600);
     }
     public boolean roughlyAtTarget() {
         return Math.abs(getPos() - target) < 25;
@@ -133,9 +139,11 @@ public class Outtake {
 
     public void periodic() {
         update();
-        toHigh();
-        toLow();
-        telemetry();
+        takeSpec();
+        leaveSpec();
+        //toHigh();
+        //toLow();
+        //telemetry();
     }
     public void toHigh() {
         if(needH){
@@ -182,6 +190,48 @@ public class Outtake {
             if(timerL.getElapsedTimeSeconds()>0.5 && timerL.getElapsedTimeSeconds()<=0.7){
                 toDown();
                 needL=false;
+            }
+        }
+    }
+
+    public void takeSpec(){
+        if(needS){
+            if(needTS){
+                timerS.resetTimer();
+                needTS=false;
+            }
+            if(timerS.getElapsedTimeSeconds()>0 && timerS.getElapsedTimeSeconds()<=0.1){
+                claw.setPosition(0.75);
+            }
+            if(timerS.getElapsedTimeSeconds()>0.2 && timerS.getElapsedTimeSeconds()<=0.4){
+               toSpec();
+           }
+        if(timerS.getElapsedTimeSeconds()>0.4 && timerS.getElapsedTimeSeconds()<=0.6){
+                outtake1.setPosition(0.35);
+                outtake2.setPosition(0.35);
+                rotate.setPosition(0.2);
+                needS=false;
+            }
+        }
+    }
+    public void leaveSpec(){
+        if(needSL){
+            if(needTSL){
+                timerSL.resetTimer();
+                needTSL=false;
+            }
+            if(timerSL.getElapsedTimeSeconds()>0 && timerSL.getElapsedTimeSeconds()<=0.1){
+                claw.setPosition(0.5);
+                rotate.setPosition(0.5);
+            }
+            if(timerSL.getElapsedTimeSeconds()>0.5 && timerSL.getElapsedTimeSeconds()<=0.8){
+                toDown();
+            }
+            if(timerSL.getElapsedTimeSeconds()>0.8 && timerSL.getElapsedTimeSeconds()<=1){
+                rotate.setPosition(0.3);
+                outtake1.setPosition(0.95);
+                outtake2.setPosition(0.95);
+                needSL=false;
             }
         }
     }
