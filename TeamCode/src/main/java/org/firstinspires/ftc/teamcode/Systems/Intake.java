@@ -30,7 +30,7 @@ public class Intake {
     public boolean r,y,b;
     public int pos;
     public static double p = 0.01, i = 0, d = 0.00000000000005, f = 0.05;
-    public static double down=0.0,low=200.0,high=500.0;
+    public static int down=0,low=200,high=600;
     public static double red,blue,green;
     public Intake(HardwareMap hardwareMap, Telemetry telemetry){
         colorSensor = hardwareMap.get(ColorSensor.class, "colorSensor");
@@ -41,7 +41,7 @@ public class Intake {
         latch = hardwareMap.get(Servo.class, "latch");
         intake.setDirection(DcMotorSimple.Direction.REVERSE);
         misumi.setDirection(DcMotorSimple.Direction.REVERSE);
-        misumi.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        misumi.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER); //Auto Init
         misumi.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         pid = new PIDController(p , i , d);
     }
@@ -86,13 +86,13 @@ public class Intake {
     }
 
     public void toDown() {
-        setTarget(0);
+        setTarget(down);
     }
     public void toLow() {
-        setTarget(50);
+        setTarget(low);
     }
     public void toHigh() {
-        setTarget(600);
+        setTarget(high);
     }
 
     public boolean roughlyAtTarget() {

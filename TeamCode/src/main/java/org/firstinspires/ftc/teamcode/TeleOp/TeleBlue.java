@@ -15,7 +15,7 @@ public class TeleBlue extends OpMode {
 
     @Override
     public void init() {
-        r = new Robot(hardwareMap, telemetry, gamepad1 , gamepad2, false,true);
+        r = new Robot(hardwareMap, telemetry, gamepad1 , gamepad2,true,true);
     }
 
     @Override

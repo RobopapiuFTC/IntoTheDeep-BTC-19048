@@ -47,11 +47,13 @@ public class Outtake {
         timerH= new Timer();
         timerS= new Timer();
         timerSL= new Timer();
+        //Auto init
         outtake1.setPosition(0.35);
         outtake2.setPosition(0.35);
         claw.setPosition(0.75);
         rotate.setPosition(0.1);
         lift1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        //Leave here
         lift1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         lift2.setDirection(DcMotorSimple.Direction.REVERSE);
         lift2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);

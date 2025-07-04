@@ -37,13 +37,13 @@ public class Robot {
     public int flip = 1, iState = -1;
     private boolean aInitLoop, frontScore = false, backScore = true, automationActive = false;
 
-    public Robot(HardwareMap h, Telemetry t, Gamepad g1, Gamepad g2,boolean robotCentric, boolean alliance) {
+    public Robot(HardwareMap h, Telemetry t, Gamepad g1, Gamepad g2, boolean blue,boolean spec) {
         this.h = h;
         this.t = t;
         this.g1 = g1;
         this.g2 = g2;
-        this.ro = robotCentric;
-        this.a = alliance;
+        this.a = blue;
+        this.ts = spec;
 
         f = new Follower(h, FConstants.class, LConstants.class);
 
@@ -64,7 +64,7 @@ public class Robot {
     }
 
     public void tPeriodic() {
-        intake();
+        //intake();
         run();
         m.periodic(g1);
         i.periodic();
@@ -83,96 +83,37 @@ public class Robot {
 
     public void dualControls() {
 
-        if (g1.dpad_up && !g1.left_bumper){
-            setIntakeState(0);
+        if(g1.dpad_up && !g1.left_bumper)i.toHigh();
+        if(g1.dpad_down && !g1.left_bumper)i.toDown();
+
+        if (g1.dpad_up && g1.left_bumper){ //Intake run
+            need = true;
+            running = true;
         }
-        if(g1.dpad_right)i.toHigh();
-       if(g1.dpad_up && g1.left_bumper){
-            o.targetHigh();
-        }
-        if(g1.dpad_down && g1.left_bumper){
-            o.toDown();
-        }
-        if(g1.dpad_right && !g1.left_bumper)i.toHigh();
-        if(g1.y && !g1.left_bumper){
+        if(g1.y && !g1.left_bumper){ //Rotate intake
             if(rTimer.getElapsedTimeSeconds()>0.3)da=!da;
             rotation(da);
         }
-        if(g1.a && !g1.left_bumper){
+        if(g1.a && !g1.left_bumper){ //Take spec off wall
             o.needTS = true;
             o.needS = true;
         }
-        if(g1.b && !g1.left_bumper){
+        if(g1.b && !g1.left_bumper){ //Leave spec on bar
             o.needTSL = true;
             o.needSL = true;
         }
-        if(g1.a && g1.left_bumper){
+        if(g1.b && g1.left_bumper){ //Leave spec on bar manual
             o.claw.setPosition(0.5);
             o.rotate.setPosition(0.5);
         }
-        if(g1.x && g1.left_bumper)o.claw.setPosition(0.75);
-        /*if(g1.b){
-            i.intake.setPower(0);
-            need=false;
-            running=false;
-        } */
-        if(g1.dpad_down && !g1.left_bumper)i.toDown();
-    }
-
-    public HardwareMap getH() {
-        return h;
-    }
-
-    public Telemetry getT() {
-        return t;
-    }
-
-
-    public Gamepad getG1() {
-        return g1;
-    }
-
-    public Gamepad getG2() {
-        return g2;
-    }
-
-    public Follower getF() {
-        return f;
-    }
-
-    public Intake getI() {
-        return i;
-    }
-
-    public void setI(Intake i) {
-        this.i = i;
-    }
-
-    public void slowDrive() {
-        speed = 0.25;
-    }
-
-    public void normalDrive() {
-        speed = 0.75;
-    }
-
-    public void fastDrive() {
-        speed = 0.25;
-    }
-
-    public void flip() {
-        flip = -1;
-    }
-
-    public void unflip() {
-        flip = 1;
+        if(g1.a && g1.left_bumper)o.claw.setPosition(0.75); // Close claw manual
     }
     public void setIntakeState(int x){
         iState = x;
         iTimer.resetTimer();
     }
 
-    public void intake(){
+    /*public void intake(){
         t.addData("Intake State", iState);
 
         switch(iState){
@@ -186,7 +127,7 @@ public class Robot {
                 setIntakeState(-1);
                 break;
         }
-    }
+    } */
     public void rotation(boolean da){
         if(rTimer.getElapsedTimeSeconds()>0.3)
             if(da){
