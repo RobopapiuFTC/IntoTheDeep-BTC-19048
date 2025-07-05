@@ -226,10 +226,10 @@ public class Outtake {
                 claw.setPosition(0.5);
                 rotate.setPosition(0.5);
             }
-            if(timerSL.getElapsedTimeSeconds()>0.5 && timerSL.getElapsedTimeSeconds()<=0.8){
+            if(timerSL.getElapsedTimeSeconds()>0.2 && timerSL.getElapsedTimeSeconds()<=0.4){
                 toDown();
             }
-            if(timerSL.getElapsedTimeSeconds()>0.8 && timerSL.getElapsedTimeSeconds()<=1){
+            if(timerSL.getElapsedTimeSeconds()>0.4 && timerSL.getElapsedTimeSeconds()<=0.7){
                 rotate.setPosition(0.3);
                 outtake1.setPosition(0.95);
                 outtake2.setPosition(0.95);
