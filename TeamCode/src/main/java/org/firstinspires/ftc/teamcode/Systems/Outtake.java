@@ -155,13 +155,13 @@ public class Outtake {
                 needT=false;
             }
             if(timerH.getElapsedTimeSeconds()>0 && timerH.getElapsedTimeSeconds()<=0.2)targetLow();
-            if(timerH.getElapsedTimeSeconds()>0.2 && timerH.getElapsedTimeSeconds()<=0.4){
+            if(timerH.getElapsedTimeSeconds()>0.2 && timerH.getElapsedTimeSeconds()<=0.5){
                 claw.setPosition(0.5);
                 rotate.setPosition(0.4);
                 outtake1.setPosition(0.14);
                 outtake2.setPosition(0.14);
             }
-            if(timerH.getElapsedTimeSeconds()>0.4 && timerH.getElapsedTimeSeconds()<=0.5){
+            if(timerH.getElapsedTimeSeconds()>0.5 && timerH.getElapsedTimeSeconds()<=0.6){
                 targetTransfer();
             }
             if(timerH.getElapsedTimeSeconds()>0.8 && timerH.getElapsedTimeSeconds()<=0.9){
