@@ -102,11 +102,22 @@ public class Robot {
             o.needTSL = true;
             o.needSL = true;
         }
+        if(g1.x && !g1.left_bumper){
+            need=false;
+            running = false;
+            i.intake.setDirection(DcMotorSimple.Direction.FORWARD);
+            i.intake.setPower(0.38);
+        }
+        if(g1.x && g1.left_bumper){
+            need=false;
+            running = false;
+            i.intake.setPower(0);
+        }
         if(g1.b && g1.left_bumper){ //Leave spec on bar manual
             o.claw.setPosition(0.5);
             o.rotate.setPosition(0.5);
         }
-        if(g1.a && g1.left_bumper)o.claw.setPosition(0.75); // Close claw manual
+        if(g1.a && g1.left_bumper)o.claw.setPosition(0.77); // Close claw manual
     }
     public void setIntakeState(int x){
         iState = x;

@@ -211,7 +211,7 @@ public class Outtake {
         if(timerS.getElapsedTimeSeconds()>0.4 && timerS.getElapsedTimeSeconds()<=0.6){
                 outtake1.setPosition(0.35);
                 outtake2.setPosition(0.35);
-                rotate.setPosition(0.2);
+                rotate.setPosition(0.25);
                 needS=false;
             }
         }
