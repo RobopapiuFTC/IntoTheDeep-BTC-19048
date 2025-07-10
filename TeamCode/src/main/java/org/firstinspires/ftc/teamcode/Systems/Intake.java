@@ -41,7 +41,6 @@ public class Intake {
         latch = hardwareMap.get(Servo.class, "latch");
         intake.setDirection(DcMotorSimple.Direction.REVERSE);
         misumi.setDirection(DcMotorSimple.Direction.REVERSE);
-        misumi.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER); //Auto Init
         misumi.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         pid = new PIDController(p , i , d);
     }

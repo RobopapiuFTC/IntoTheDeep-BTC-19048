@@ -4,6 +4,7 @@ package org.firstinspires.ftc.teamcode.Hardware;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.localization.Pose;
 import com.pedropathing.util.Timer;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -21,11 +22,11 @@ public class Robot {
     private HardwareMap h;
     private Telemetry t;
     public static double red,blue,green;
-    private Gamepad g1,g2;
-    private Follower f;
-    private Intake i;
-    private Movement m;
-    private Outtake o;
+    public Gamepad g1,g2;
+    public Follower f;
+    public Intake i;
+    public Movement m;
+    public Outtake o;
     private boolean a;
     private boolean ro = true;
     public static Pose autoEndPose = new Pose();
@@ -33,7 +34,7 @@ public class Robot {
     public Pose s = new Pose();
     public double speed = 0.9;
     public Timer iTimer,rTimer;
-    public boolean da=true,r,y,b,need=false,running = false,ts=false;
+    public boolean da=true,r,y,b,need=false,running = false,ts=false,spec=false;
     public int flip = 1, iState = -1;
     private boolean aInitLoop, frontScore = false, backScore = true, automationActive = false;
 
@@ -43,7 +44,7 @@ public class Robot {
         this.g1 = g1;
         this.g2 = g2;
         this.a = blue;
-        this.ts = spec;
+        this.spec = spec;
 
         f = new Follower(h, FConstants.class, LConstants.class);
 
@@ -52,15 +53,11 @@ public class Robot {
         m = new Movement(this.h,this.t);
         iTimer = new Timer();
         rTimer = new Timer();
-        i.latch.setPosition(0.3);
-        i.intake1.setPosition(0.5);
-        i.intake2.setPosition(0.5);
     }
 
     public void aPeriodic() {
         i.periodic();
-        m.periodic(g1);
-        o.periodic();
+        o.aperiodic();
         t.update();
     }
 
@@ -69,8 +66,26 @@ public class Robot {
         run();
         m.periodic(g1);
         i.periodic();
-        o.periodic();
+        o.tperiodic();
         t.update();
+    }
+    public void tInit(){
+        o.outtake1.setPosition(0.35);
+        o.outtake2.setPosition(0.35);
+        i.latch.setPosition(0.3);
+        i.intake1.setPosition(0.5);
+        i.intake2.setPosition(0.5);
+    }
+    public void aInit(){
+        o.outtake1.setPosition(0.35);
+        o.outtake2.setPosition(0.35);
+        o.claw.setPosition(0.7);
+        o.rotate.setPosition(0.25);
+        i.misumi.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        o.lift1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        i.latch.setPosition(0.3);
+        i.intake1.setPosition(0.5);
+        i.intake2.setPosition(0.5);
     }
 
     public void tStart() {
@@ -83,7 +98,7 @@ public class Robot {
     }
 
     public void dualControls() {
-        if (ts) {
+        if (spec) {
             if (g1.dpad_up && !g1.left_bumper) i.toHigh();
             if (g1.dpad_down && !g1.left_bumper) i.toDown();
 
@@ -119,7 +134,7 @@ public class Robot {
                 o.rotate.setPosition(0.5);
             }
             if (g1.a && g1.left_bumper) o.claw.setPosition(0.77); // Close claw manual
-            if(g1.options)ts=!ts;
+            if(g1.options)spec=!spec;
         }
         else{
             if (g1.dpad_up && !g1.left_bumper) i.toHigh();
@@ -160,7 +175,7 @@ public class Robot {
                 o.rotate.setPosition(0.5);
             }
             if (g1.a && g1.left_bumper) o.claw.setPosition(0.77); // Close claw manual
-            if(g1.options)ts=!ts;
+            if(g1.options)spec=!spec;
         }
     }
     public void setIntakeState(int x){
@@ -248,22 +263,22 @@ public class Robot {
                         else g1.rumble(0,1,500);
                     }
                     need=false;
-                    if (iTimer.getElapsedTimeSeconds() >= 0.2 && iTimer.getElapsedTimeSeconds()<0.4) {
+                    if (iTimer.getElapsedTimeSeconds() >= 0 && iTimer.getElapsedTimeSeconds()<0.2) {
                         i.transfer();
                     }
-                    if (iTimer.getElapsedTimeSeconds()>= 0.4 && iTimer.getElapsedTimeSeconds()<0.8) {
+                    if (iTimer.getElapsedTimeSeconds()>= 0.2 && iTimer.getElapsedTimeSeconds()<0.4) {
                         i.intake.setDirection(DcMotorSimple.Direction.FORWARD);
                         i.intake.setPower(0.38);
                     }
-                    if (iTimer.getElapsedTimeSeconds() >= 0.8 && iTimer.getElapsedTimeSeconds()<1.1) {
+                    if (iTimer.getElapsedTimeSeconds() >= 0.4 && iTimer.getElapsedTimeSeconds()<0.6) {
                         i.intake.setDirection(DcMotorSimple.Direction.REVERSE);
                         i.intake.setPower(0.5);
                     }
-                    if(iTimer.getElapsedTimeSeconds() >=1.2 && iTimer.getElapsedTimeSeconds()<1.6){
-                        i.latch.setPosition(0.3);
+                    if(iTimer.getElapsedTimeSeconds() >=0.7 && iTimer.getElapsedTimeSeconds()<1){
                         i.toDown();
                     }
-                    if(iTimer.getElapsedTimeSeconds()>=1.6){
+                    if(iTimer.getElapsedTimeSeconds()>=1.1){
+                        i.latch.setPosition(0.3);
                         i.intake.setPower(0);
                         running = false;
                         r=false;
@@ -286,25 +301,27 @@ public class Robot {
 
                     if(need) {
                         iTimer.resetTimer();
-                        i.latch.setPosition(0.8);
+                        i.latch.setPosition(0.6);
                         if(r)g1.rumble(1,0,200);
                         else g1.rumble(0,1,500);
                     }
                     need=false;
-                    if (iTimer.getElapsedTimeSeconds()>= 0.3 && iTimer.getElapsedTimeSeconds()<0.8) {
+                    if (iTimer.getElapsedTimeSeconds() >= 0 && iTimer.getElapsedTimeSeconds()<0.2) {
+                        i.transfer();
+                    }
+                    if (iTimer.getElapsedTimeSeconds()>= 0.2 && iTimer.getElapsedTimeSeconds()<0.4) {
                         i.intake.setDirection(DcMotorSimple.Direction.FORWARD);
                         i.intake.setPower(0.38);
                     }
-                    if (iTimer.getElapsedTimeSeconds() >= 0.8 && iTimer.getElapsedTimeSeconds()<1.1) {
+                    if (iTimer.getElapsedTimeSeconds() >= 0.4 && iTimer.getElapsedTimeSeconds()<0.6) {
                         i.intake.setDirection(DcMotorSimple.Direction.REVERSE);
                         i.intake.setPower(0.5);
-                        i.transfer();
                     }
-                    if(iTimer.getElapsedTimeSeconds() >=1.2 && iTimer.getElapsedTimeSeconds()<1.6){
-                        i.latch.setPosition(0.3);
+                    if(iTimer.getElapsedTimeSeconds() >=0.7 && iTimer.getElapsedTimeSeconds()<1){
                         i.toDown();
                     }
-                    if(iTimer.getElapsedTimeSeconds()>=1.6){
+                    if(iTimer.getElapsedTimeSeconds()>=1.1){
+                        i.latch.setPosition(0.3);
                         i.intake.setPower(0);
                         running = false;
                         r=false;
@@ -325,6 +342,13 @@ public class Robot {
             }
         }
     }
-
+    public void leaveSpec(){
+        o.needTSL = true;
+        o.needSL = true;
+    }
+    public void takeSpec(){
+        o.needTS = true;
+        o.needS = true;
+    }
 
 }

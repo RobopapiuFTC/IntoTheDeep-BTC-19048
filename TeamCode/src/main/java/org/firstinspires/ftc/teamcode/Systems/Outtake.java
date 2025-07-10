@@ -47,12 +47,6 @@ public class Outtake {
         timerH= new Timer();
         timerS= new Timer();
         timerSL= new Timer();
-        //Auto init
-        outtake1.setPosition(0.35);
-        outtake2.setPosition(0.35);
-        claw.setPosition(0.7);
-        rotate.setPosition(0.25);
-        lift1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         //Leave here
         lift1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         lift2.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -110,9 +104,11 @@ public class Outtake {
     public void toDown() {
         setTarget(0);
     }
-    public void toSpec(){setTarget(1280);}
+    public void toSpec(){
+        setTarget(1280);
+    }
     public void targetTransfer(){
-        setTarget(175);
+        setTarget(150);
     }
     public void targetLow(){
         setTarget(500);
@@ -139,13 +135,18 @@ public class Outtake {
     public void telemetry() {
     }
 
-    public void periodic() {
+    public void tperiodic() {
         update();
         takeSpec();
         leaveSpec();
         toHigh();
         toLow();
         //telemetry();
+    }
+    public void aperiodic(){
+        update();
+        takeSpec();
+        aleaveSpec();
     }
     public void toHigh() {
         if(needH){
@@ -163,13 +164,13 @@ public class Outtake {
             if(timerH.getElapsedTimeSeconds()>0.4 && timerH.getElapsedTimeSeconds()<=0.5){
                 targetTransfer();
             }
-            if(timerH.getElapsedTimeSeconds()>0.7 && timerH.getElapsedTimeSeconds()<=0.8){
+            if(timerH.getElapsedTimeSeconds()>0.8 && timerH.getElapsedTimeSeconds()<=0.9){
                 claw.setPosition(0.65);
             }
-            if(timerH.getElapsedTimeSeconds()>0.8 && timerH.getElapsedTimeSeconds()<=1){
+            if(timerH.getElapsedTimeSeconds()>0.9 && timerH.getElapsedTimeSeconds()<=1.1){
                 targetHigh();
             }
-            if(timerH.getElapsedTimeSeconds()>1.5 && timerH.getElapsedTimeSeconds()<=1.7){
+            if(timerH.getElapsedTimeSeconds()>1.6 && timerH.getElapsedTimeSeconds()<=1.8){
                 outtake1.setPosition(0.7);
                 outtake2.setPosition(0.7);
                 rotate.setPosition(0.7);
@@ -237,4 +238,26 @@ public class Outtake {
             }
         }
     }
+    public void aleaveSpec(){
+        if(needSL){
+            if(needTSL){
+                timerSL.resetTimer();
+                needTSL=false;
+            }
+            if(timerSL.getElapsedTimeSeconds()>0 && timerSL.getElapsedTimeSeconds()<=0.1){
+                claw.setPosition(0.5);
+                rotate.setPosition(0.5);
+            }
+            if(timerSL.getElapsedTimeSeconds()>0.7 && timerSL.getElapsedTimeSeconds()<=0.9){
+                toDown();
+            }
+            if(timerSL.getElapsedTimeSeconds()>0.9 && timerSL.getElapsedTimeSeconds()<=1.1){
+                rotate.setPosition(0.3);
+                outtake1.setPosition(0.95);
+                outtake2.setPosition(0.95);
+                needSL=false;
+            }
+        }
+    }
+
 }
