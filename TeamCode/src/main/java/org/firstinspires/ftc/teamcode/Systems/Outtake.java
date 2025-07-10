@@ -33,8 +33,8 @@ public class Outtake {
     public static double p = 0.01, i = 0, d = 0.00000000000005, f = 0.05;
     public static double down=0.0,low=200.0,high=500.0;
     public static double red,blue,green;
-    public boolean needL=false,needH=false,needT=true,needS=false,needSL=false,needTS=false,needTSL=false;
-    public Timer timerL,timerH,timerS,timerSL;
+    public boolean needL=false,needH=false,needT=true,needS=false,needSL=false,needTS=false,needTSL=false,needTL=false;
+    public Timer timerL,timerH,timerS,timerSL,timerTL;
     public Outtake(HardwareMap hardwareMap, Telemetry telemetry){
         outtake1 = hardwareMap.get(Servo.class, "outtake1");
         outtake2 = hardwareMap.get(Servo.class, "outtake2");
@@ -50,8 +50,8 @@ public class Outtake {
         //Auto init
         outtake1.setPosition(0.35);
         outtake2.setPosition(0.35);
-        claw.setPosition(0.75);
-        rotate.setPosition(0.1);
+        claw.setPosition(0.7);
+        rotate.setPosition(0.25);
         lift1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         //Leave here
         lift1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -69,7 +69,7 @@ public class Outtake {
             double pid_output = pid.calculate(getPos(), target);
             double power = pid_output + f;
 
-            if (getPos() < 20 && target < 20) {
+            if (getPos() < 4 && target < 4) {
                 lift1.setPower(0);
                 lift2.setPower(0);
             } else {
@@ -112,13 +112,13 @@ public class Outtake {
     }
     public void toSpec(){setTarget(1280);}
     public void targetTransfer(){
-        setTarget(30);
+        setTarget(175);
     }
     public void targetLow(){
-        setTarget(100);
+        setTarget(500);
     }
     public void targetHigh(){
-        setTarget(1600);
+        setTarget(2050);
     }
     public boolean roughlyAtTarget() {
         return Math.abs(getPos() - target) < 25;
@@ -143,8 +143,8 @@ public class Outtake {
         update();
         takeSpec();
         leaveSpec();
-        //toHigh();
-        //toLow();
+        toHigh();
+        toLow();
         //telemetry();
     }
     public void toHigh() {
@@ -153,44 +153,44 @@ public class Outtake {
                 timerH.resetTimer();
                 needT=false;
             }
-            if(timerH.getElapsedTimeSeconds()>0 && timerH.getElapsedTimeSeconds()<=0.1)targetLow();
-            if(timerH.getElapsedTimeSeconds()>0.1 && timerH.getElapsedTimeSeconds()<=0.3){
+            if(timerH.getElapsedTimeSeconds()>0 && timerH.getElapsedTimeSeconds()<=0.2)targetLow();
+            if(timerH.getElapsedTimeSeconds()>0.2 && timerH.getElapsedTimeSeconds()<=0.4){
                 claw.setPosition(0.5);
-                rotate.setPosition(0.3);
-                outtake1.setPosition(0.1);
-                outtake2.setPosition(0.9);
-            }
-            if(timerH.getElapsedTimeSeconds()>0.3 && timerH.getElapsedTimeSeconds()<=0.4){
-                targetTransfer();
+                rotate.setPosition(0.4);
+                outtake1.setPosition(0.14);
+                outtake2.setPosition(0.14);
             }
             if(timerH.getElapsedTimeSeconds()>0.4 && timerH.getElapsedTimeSeconds()<=0.5){
-                claw.setPosition(0.3);
+                targetTransfer();
             }
-            if(timerH.getElapsedTimeSeconds()>0.5 && timerH.getElapsedTimeSeconds()<=0.8){
+            if(timerH.getElapsedTimeSeconds()>0.7 && timerH.getElapsedTimeSeconds()<=0.8){
+                claw.setPosition(0.65);
+            }
+            if(timerH.getElapsedTimeSeconds()>0.8 && timerH.getElapsedTimeSeconds()<=1){
                 targetHigh();
             }
-            if(timerH.getElapsedTimeSeconds()>1.3 && timerH.getElapsedTimeSeconds()<=1.5){
-                outtake1.setPosition(0.6);
-                outtake2.setPosition(0.4);
-                rotate.setPosition(0.6);
+            if(timerH.getElapsedTimeSeconds()>1.5 && timerH.getElapsedTimeSeconds()<=1.7){
+                outtake1.setPosition(0.7);
+                outtake2.setPosition(0.7);
+                rotate.setPosition(0.7);
                 needH=false;
             }
         }
     }
     public void toLow(){
         if(needL){
-            if(needT){
+            if(needTL){
                 timerL.resetTimer();
-                needT=false;
+                needTL=false;
             }
-            if(timerL.getElapsedTimeSeconds()>0 && timerL.getElapsedTimeSeconds()<=0.1)claw.setPosition(0.5);
+            if(timerL.getElapsedTimeSeconds()>0 && timerL.getElapsedTimeSeconds()<=0.2)claw.setPosition(0.5);
             if(timerL.getElapsedTimeSeconds()>0.3 && timerL.getElapsedTimeSeconds()<=0.5){
-                rotate.setPosition(0.3);
-                outtake1.setPosition(0.3);
-                outtake2.setPosition(0.7);
+                rotate.setPosition(0.4);
+                outtake1.setPosition(0.4);
+                outtake2.setPosition(0.4);
             }
             if(timerL.getElapsedTimeSeconds()>0.5 && timerL.getElapsedTimeSeconds()<=0.7){
-                toDown();
+                targetLow();
                 needL=false;
             }
         }

@@ -52,6 +52,7 @@ public class Robot {
         m = new Movement(this.h,this.t);
         iTimer = new Timer();
         rTimer = new Timer();
+        i.latch.setPosition(0.3);
         i.intake1.setPosition(0.5);
         i.intake2.setPosition(0.5);
     }
@@ -82,42 +83,85 @@ public class Robot {
     }
 
     public void dualControls() {
+        if (ts) {
+            if (g1.dpad_up && !g1.left_bumper) i.toHigh();
+            if (g1.dpad_down && !g1.left_bumper) i.toDown();
 
-        if(g1.dpad_up && !g1.left_bumper)i.toHigh();
-        if(g1.dpad_down && !g1.left_bumper)i.toDown();
+            if (g1.dpad_up && g1.left_bumper) { //Intake run
+                need = true;
+                running = true;
+            }
+            if (g1.y && !g1.left_bumper) { //Rotate intake
+                if (rTimer.getElapsedTimeSeconds() > 0.3) da = !da;
+                rotation(da);
+            }
+            if (g1.a && !g1.left_bumper) { //Take spec off wall
+                o.needTS = true;
+                o.needS = true;
+            }
+            if (g1.b && !g1.left_bumper) { //Leave spec on bar
+                o.needTSL = true;
+                o.needSL = true;
+            }
+            if (g1.x && !g1.left_bumper) {
+                need = false;
+                running = false;
+                i.intake.setDirection(DcMotorSimple.Direction.FORWARD);
+                i.intake.setPower(0.38);
+            }
+            if (g1.x && g1.left_bumper) {
+                need = false;
+                running = false;
+                i.intake.setPower(0);
+            }
+            if (g1.b && g1.left_bumper) { //Leave spec on bar manual
+                o.claw.setPosition(0.5);
+                o.rotate.setPosition(0.5);
+            }
+            if (g1.a && g1.left_bumper) o.claw.setPosition(0.77); // Close claw manual
+            if(g1.options)ts=!ts;
+        }
+        else{
+            if (g1.dpad_up && !g1.left_bumper) i.toHigh();
+            if (g1.dpad_down && !g1.left_bumper) i.toDown();
 
-        if (g1.dpad_up && g1.left_bumper){ //Intake run
-            need = true;
-            running = true;
+            if (g1.dpad_up && g1.left_bumper) { //Intake run
+                need = true;
+                running = true;
+            }
+            if (g1.y && !g1.left_bumper) { //Rotate intake
+                if (rTimer.getElapsedTimeSeconds() > 0.3) da = !da;
+                rotation(da);
+            }
+            if (g1.x && !g1.left_bumper) {
+                need = false;
+                running = false;
+                i.intake.setDirection(DcMotorSimple.Direction.FORWARD);
+                i.intake.setPower(0.38);
+            }
+            if (g1.x && g1.left_bumper) {
+                need = false;
+                running = false;
+                i.intake.setPower(0);
+            }
+            if(g1.dpad_right){
+                o.targetLow();
+            }
+            if (g1.b && !g1.left_bumper) { //Take spec off wall
+                o.needH = true;
+                o.needT = true;
+            }
+            if (g1.a && !g1.left_bumper) { //Leave spec on bar
+                o.needL = true;
+                o.needTL = true;
+            }
+            if (g1.b && g1.left_bumper) { //Leave spec on bar manual
+                o.claw.setPosition(0.5);
+                o.rotate.setPosition(0.5);
+            }
+            if (g1.a && g1.left_bumper) o.claw.setPosition(0.77); // Close claw manual
+            if(g1.options)ts=!ts;
         }
-        if(g1.y && !g1.left_bumper){ //Rotate intake
-            if(rTimer.getElapsedTimeSeconds()>0.3)da=!da;
-            rotation(da);
-        }
-        if(g1.a && !g1.left_bumper){ //Take spec off wall
-            o.needTS = true;
-            o.needS = true;
-        }
-        if(g1.b && !g1.left_bumper){ //Leave spec on bar
-            o.needTSL = true;
-            o.needSL = true;
-        }
-        if(g1.x && !g1.left_bumper){
-            need=false;
-            running = false;
-            i.intake.setDirection(DcMotorSimple.Direction.FORWARD);
-            i.intake.setPower(0.38);
-        }
-        if(g1.x && g1.left_bumper){
-            need=false;
-            running = false;
-            i.intake.setPower(0);
-        }
-        if(g1.b && g1.left_bumper){ //Leave spec on bar manual
-            o.claw.setPosition(0.5);
-            o.rotate.setPosition(0.5);
-        }
-        if(g1.a && g1.left_bumper)o.claw.setPosition(0.77); // Close claw manual
     }
     public void setIntakeState(int x){
         iState = x;
@@ -199,7 +243,7 @@ public class Robot {
 
                     if(need) {
                         iTimer.resetTimer();
-                        i.latch.setPosition(0.8);
+                        i.latch.setPosition(0.6);
                         if(b)g1.rumble(1,0,200);
                         else g1.rumble(0,1,500);
                     }
