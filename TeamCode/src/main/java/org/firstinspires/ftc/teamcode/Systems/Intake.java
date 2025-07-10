@@ -30,7 +30,7 @@ public class Intake {
     public boolean r,y,b;
     public int pos;
     public static double p = 0.01, i = 0, d = 0.00000000000005, f = 0.05;
-    public static int down=0,low=200,high=600;
+    public static int down=0,low=200,medium=400,high=600;
     public static double red,blue,green;
     public Intake(HardwareMap hardwareMap, Telemetry telemetry){
         colorSensor = hardwareMap.get(ColorSensor.class, "colorSensor");
@@ -90,6 +90,7 @@ public class Intake {
     public void toLow() {
         setTarget(low);
     }
+    public void toMedium(){setTarget(medium);}
     public void toHigh() {
         setTarget(high);
     }

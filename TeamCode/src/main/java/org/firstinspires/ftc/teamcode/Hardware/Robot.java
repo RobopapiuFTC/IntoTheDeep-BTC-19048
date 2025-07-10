@@ -101,6 +101,8 @@ public class Robot {
         if (spec) {
             if (g1.dpad_up && !g1.left_bumper) i.toHigh();
             if (g1.dpad_down && !g1.left_bumper) i.toDown();
+            if (g1.dpad_right && !g1.left_bumper) i.toMedium();
+            if (g1.dpad_left && !g1.left_bumper) i.toLow();
 
             if (g1.dpad_up && g1.left_bumper) { //Intake run
                 need = true;
