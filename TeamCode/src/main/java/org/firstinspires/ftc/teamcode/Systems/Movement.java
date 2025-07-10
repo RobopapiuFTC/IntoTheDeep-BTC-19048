@@ -27,14 +27,14 @@ public class Movement {
         movement(gamepad);
     }
     public void movement(Gamepad gamepad1){
-        double drive = -gamepad1.left_stick_y; // Remember, Y stick is reversed!
-        double strafe = gamepad1.left_stick_x; // Counteract imperfect strafing
-        double turn = gamepad1.right_stick_x;
-
-        double frontLeftPower = (drive + strafe + turn);
-        double backLeftPower = (drive - strafe + turn );
-        double frontRightPower = (drive - strafe - turn);
-        double backRightPower = (drive + strafe - turn );
+        double y = -gamepad1.left_stick_y;
+        double x = gamepad1.left_stick_x * 1.1;
+        double rx = gamepad1.right_stick_x;
+        double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
+        double frontLeftPower = (y + x + rx) / denominator;
+        double backLeftPower = (y - x + rx) / denominator;
+        double frontRightPower = (y - x - rx) / denominator;
+        double backRightPower = (y + x - rx) / denominator;
         if(gamepad1.right_trigger>0.3){
             leftFront.setPower(frontLeftPower/3);
             leftRear.setPower(backLeftPower/3);
