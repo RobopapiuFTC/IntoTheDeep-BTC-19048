@@ -17,6 +17,7 @@ import com.rowanmcalpin.nextftc.ftc.hardware.controllables.MotorEx;
 import com.rowanmcalpin.nextftc.ftc.hardware.controllables.RunToPosition;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import com.pedropathing.util.Timer;
 
 public class Intake {
     public DcMotorEx intake,misumi;
@@ -24,6 +25,7 @@ public class Intake {
     public ColorSensor colorSensor;
     public int pidLevel=0;
     public static int target=0;
+    private boolean ok=false;
     public PIDController pid;
     public Telemetry telemetry;
 
@@ -31,6 +33,7 @@ public class Intake {
     public int pos;
     public static double p = 0.01, i = 0, d = 0.00000000000005, f = 0.05;
     public static int down=0,low=200,medium=400,high=600;
+    private Timer it;
     public static double red,blue,green;
     public Intake(HardwareMap hardwareMap, Telemetry telemetry){
         colorSensor = hardwareMap.get(ColorSensor.class, "colorSensor");
@@ -40,9 +43,9 @@ public class Intake {
         misumi = hardwareMap.get(DcMotorEx.class, "misumi");
         latch = hardwareMap.get(Servo.class, "latch");
         intake.setDirection(DcMotorSimple.Direction.REVERSE);
-        misumi.setDirection(DcMotorSimple.Direction.REVERSE);
-        misumi.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         pid = new PIDController(p , i , d);
+        it = new Timer();
+        it.resetTimer();
     }
     public void update() {
         if(pidLevel == 1) {
@@ -52,7 +55,7 @@ public class Intake {
             double pid_output = pid.calculate(getPos(), target);
             double power = pid_output + f;
 
-            if (getPos() < 5 && target < 1) {
+            if (getPos() < 0 && target < 1) {
                 misumi.setPower(0);
             } else {
                 misumi.setPower(power);
@@ -86,13 +89,22 @@ public class Intake {
 
     public void toDown() {
         setTarget(down);
+        ok=true;
     }
     public void toLow() {
         setTarget(low);
+        ok=true;
     }
-    public void toMedium(){setTarget(medium);}
+    public void toMedium(){setTarget(medium);
+    ok=true;}
     public void toHigh() {
         setTarget(high);
+        ok=true;
+    }
+    public void resetEncoder(){
+        misumi.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        misumi.setDirection(DcMotorSimple.Direction.REVERSE);
+        misumi.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
     public boolean roughlyAtTarget() {

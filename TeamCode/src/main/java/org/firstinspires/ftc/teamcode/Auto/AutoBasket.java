@@ -9,6 +9,7 @@ import com.pedropathing.pathgen.Point;
 import com.pedropathing.util.Timer;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.teamcode.Vision.Vision;
 
@@ -28,15 +29,17 @@ public class AutoBasket extends OpMode{
     private int[] unwanted;
     private Timer pathTimer, actionTimer, opmodeTimer;
     private int pathState;
+    private Robot r;
 
     private final Pose startPose = new Pose(8, 111, Math.toRadians(0));  // Starting position
-    private final Pose scorePose = new Pose(13, 130, Math.toRadians(315)); // Scoring position
+    private final Pose scorePose = new Pose(14, 132, Math.toRadians(315)); // Scoring position
     private final Pose humanPose = new Pose(13, 24, Math.toRadians(0)); // Scoring position
 
     private Path scorePreload, park;
     private Pose location,target;
     private PathChain ParkSpec6;
-    private PathChain positionLine1,linePickup1, linePickup2, linePickup3, humanLeave1, humanLeave2, humanLeave3, scorePickup1, scorePickup2, scorePickup3, scoreSub1,scoreSub2,scoreSub3,scoreSub4,Sub1,Sub2,Sub3,Sub4;
+    private boolean ok=true;
+    private PathChain positionLine1,positionLine2,positionLine3,linePickup1, linePickup2, linePickup3, humanLeave1, humanLeave2, humanLeave3, scorePickup1, scorePickup2, scorePickup3, scoreSub1,scoreSub2,scoreSub3,scoreSub4,Sub1,Sub2,Sub3,Sub4;
     public void buildPaths() {
         scorePreload = new Path(new BezierLine(new Point(startPose), new Point(scorePose)));
         scorePreload.setLinearHeadingInterpolation(startPose.getHeading(), scorePose.getHeading());
@@ -44,118 +47,289 @@ public class AutoBasket extends OpMode{
         linePickup1 = follower.pathBuilder()
                 .addPath(
                         new BezierLine(
-                                new Point(13.000, 130.000, Point.CARTESIAN),
-                                new Point(15.000, 130.000, Point.CARTESIAN)
+                                new Point(scorePose.getX(), scorePose.getY(), Point.CARTESIAN),
+                                new Point(15, 134, Point.CARTESIAN)
                         )
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(-45), Math.toRadians(-20))
+                .setLinearHeadingInterpolation(Math.toRadians(-45), Math.toRadians(-25))
+                .build();
+        positionLine1 = follower.pathBuilder()
+                .addPath(
+                        new BezierLine(
+                                new Point(15, 134, Point.CARTESIAN),
+                                new Point(23, 134, Point.CARTESIAN)
+                        )
+                )
+                .setConstantHeadingInterpolation(Math.toRadians(-25))
                 .build();
 
 
         linePickup2 = follower.pathBuilder()
                 .addPath(
                         new BezierLine(
-                                new Point(13.000, 130.000, Point.CARTESIAN),
-                                new Point(15.000, 130.000, Point.CARTESIAN)
+                                new Point(scorePose.getX(), scorePose.getY(), Point.CARTESIAN),
+                                new Point(15, 134, Point.CARTESIAN)
                         )
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(-20), Math.toRadians(0))
+                .setLinearHeadingInterpolation(Math.toRadians(-45), Math.toRadians(0))
+                .build();
+        positionLine2 = follower.pathBuilder()
+                .addPath(
+                        new BezierLine(
+                                new Point(15, 134, Point.CARTESIAN),
+                                new Point(23, 134, Point.CARTESIAN)
+                        )
+                )
+                .setConstantHeadingInterpolation(Math.toRadians(0))
                 .build();
 
         linePickup3 = follower.pathBuilder()
                 .addPath(
                         new BezierLine(
-                                new Point(13.000, 130.000, Point.CARTESIAN),
-                                new Point(20.000, 120.000, Point.CARTESIAN)
+                                new Point(scorePose.getX(), scorePose.getY(), Point.CARTESIAN),
+                                new Point(30, 111, Point.CARTESIAN)
                         )
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(-45), Math.toRadians(45))
+                .setLinearHeadingInterpolation(Math.toRadians(-45), Math.toRadians(55))
+                .build();
+        positionLine3 = follower.pathBuilder()
+                .addPath(
+                        new BezierLine(
+                                new Point(30, 111, Point.CARTESIAN),
+                                new Point(30, 121, Point.CARTESIAN)
+                        )
+                )
+                .setConstantHeadingInterpolation(Math.toRadians(55))
                 .build();
     }
-
-    public void autonomousPathUpdate() throws InterruptedException{
+    public void autonomousPathUpdate() {
         switch (pathState) {
             case 0:
-                follower.followPath(scorePreload);
-                setPathState(1);
-                break;
+                if(ok) {
+                    follower.followPath(scorePreload,true);
+                    r.o.targetHigh();
+                    actionTimer.resetTimer();
+                    ok=false;
+                }
+                if(actionTimer.getElapsedTimeSeconds()>0.7){
+                    setPathState(1);
+                    ok=true;
+                    break;
+                }
             case 1:
                 if(!follower.isBusy()) {
-                    //Comenzi lasa preload
-                    follower.followPath(linePickup1);
-                    setPathState(2);
+                    if(ok) {
+                        actionTimer.resetTimer();
+                        ok=false;
+                    }
+                    if(actionTimer.getElapsedTimeSeconds()<0.3){
+                        r.o.outtake1.setPosition(0.62);
+                        r.o.outtake2.setPosition(0.62);
+                        r.o.rotate.setPosition(0.7);
+                    }
+                    else if(actionTimer.getElapsedTimeSeconds()>=0.5 && actionTimer.getElapsedTimeSeconds()<0.7){
+                        r.o.claw.setPosition(0.5);
+                    }
+                    else if(actionTimer.getElapsedTimeSeconds()>=0.7 && actionTimer.getElapsedTimeSeconds()<0.8){
+                        r.o.rotate.setPosition(0.37);
+                        r.o.outtake1.setPosition(0.06);
+                        r.o.outtake2.setPosition(0.06);
+                        r.o.targetLow();
+
+                    }
+                    if(actionTimer.getElapsedTimeSeconds()>0.8){
+                        follower.followPath(linePickup1,true);
+                        setPathState(2);
+                        ok=true;
+                        break;
+                    }
                 }
                 break;
 
             case 2:
                 if(!follower.isBusy()) {
-                    scorePickup1 = follower.pathBuilder()
-                            .addPath(new BezierLine(
-                                            follower.getPose(),
-                                            scorePose
-                                    )
-                            )
-                            .setLinearHeadingInterpolation(follower.getPose().getHeading(), scorePose.getHeading())
-                            .build();
-                    //Comenzi pentru luat line 1
-
-                    follower.followPath(scorePickup1);
-                    setPathState(3);
+                    if(ok) {
+                        actionTimer.resetTimer();
+                        ok=false;
+                    }
+                    if(actionTimer.getElapsedTimeSeconds()<0.1){
+                        r.i.toHigh();
+                    }
+                    if(actionTimer.getElapsedTimeSeconds()>=0.2 && actionTimer.getElapsedTimeSeconds()<0.4){
+                        r.i.ground();
+                        r.i.intake.setDirection(DcMotorSimple.Direction.REVERSE);
+                        r.i.intake.setPower(0.7);
+                        r.i.latch.setPosition(0.3);
+                    }
+                    if(actionTimer.getElapsedTimeSeconds()>=0.4){
+                        follower.followPath(positionLine1,true);
+                        setPathState(3);
+                        ok=true;
+                        break;
+                    }
                 }
                 break;
-
-
             case 3:
                 if(!follower.isBusy()) {
-                    //Comenzi pentru lasat line 1
-
-                    follower.followPath(linePickup2,true);
-                    setPathState(4);
+                    if(ok) {
+                        scorePickup1 = follower.pathBuilder()
+                                .addPath(new BezierLine(
+                                                follower.getPose(),
+                                                scorePose
+                                        )
+                                )
+                                .setLinearHeadingInterpolation(follower.getPose().getHeading(), scorePose.getHeading())
+                                .build();
+                        actionTimer.resetTimer();
+                        ok=false;
+                    }
+                    if(actionTimer.getElapsedTimeSeconds()>=0.4){
+                        follower.followPath(scorePickup1,true);
+                        r.i.transfer();
+                        r.i.toDown();
+                        setPathState(4);
+                        ok=true;
+                        break;
+                    }
                 }
                 break;
+
+
             case 4:
                 if(!follower.isBusy()) {
-                    scorePickup2 = follower.pathBuilder()
-                            .addPath(new BezierLine(
-                                            follower.getPose(),
-                                            scorePose
-                                    )
-                            )
-                            .setLinearHeadingInterpolation(follower.getPose().getHeading(), scorePose.getHeading())
-                            .build();
-                    //Comenzi pentru luat line 2
-
-                    follower.followPath(scorePickup2,true);
-                    setPathState(5);
+                    if(ok) {
+                        actionTimer.resetTimer();
+                        ok=false;
+                    }
+                    if(actionTimer.getElapsedTimeSeconds()<0.2){
+                        r.HighBucket();
+                    } else if(actionTimer.getElapsedTimeSeconds()>1.9&& actionTimer.getElapsedTimeSeconds()<2.1){
+                        r.TransferSamp();
+                    }
+                    else if (actionTimer.getElapsedTimeSeconds()>2.1){
+                        follower.followPath(linePickup2,true);
+                        setPathState(5);
+                        ok=true;
+                        break;
+                    }
                 }
                 break;
             case 5:
                 if(!follower.isBusy()) {
-                    //Comenzi pentru lasat line 2
-
-                    follower.followPath(linePickup3,true);
-                    setPathState(6);
+                    if(ok) {
+                        actionTimer.resetTimer();
+                        ok=false;
+                    }
+                    if(actionTimer.getElapsedTimeSeconds()<0.1){
+                        r.i.toHigh();
+                    }
+                    if(actionTimer.getElapsedTimeSeconds()>=0.2 && actionTimer.getElapsedTimeSeconds()<0.4){
+                        r.i.ground();
+                        r.i.intake.setDirection(DcMotorSimple.Direction.REVERSE);
+                        r.i.intake.setPower(0.7);
+                        r.i.latch.setPosition(0.3);
+                    }
+                    if(actionTimer.getElapsedTimeSeconds()>=0.4){
+                        follower.followPath(positionLine2,true);
+                        setPathState(6);
+                        ok=true;
+                        break;
+                    }
                 }
                 break;
             case 6:
                 if(!follower.isBusy()) {
-                    scorePickup3 = follower.pathBuilder()
-                            .addPath(new BezierLine(
-                                            follower.getPose(),
-                                            scorePose
-                                    )
-                            )
-                            .setLinearHeadingInterpolation(follower.getPose().getHeading(), scorePose.getHeading())
-                            .build();
-                    //Comenzi pentru luat line 3
-
-                    follower.followPath(scorePickup3,true);
-                    setPathState(7);
+                    if(ok) {
+                        scorePickup2 = follower.pathBuilder()
+                                .addPath(new BezierLine(
+                                                follower.getPose(),
+                                                scorePose
+                                        )
+                                )
+                                .setLinearHeadingInterpolation(follower.getPose().getHeading(), scorePose.getHeading())
+                                .build();
+                        actionTimer.resetTimer();
+                        ok=false;
+                    }
+                    if(actionTimer.getElapsedTimeSeconds()>=0.4){
+                        follower.followPath(scorePickup2,true);
+                        r.i.transfer();
+                        r.i.toDown();
+                        setPathState(7);
+                        ok=true;
+                        break;
+                    }
                 }
                 break;
             case 7:
                 if(!follower.isBusy()) {
-                    Sub1 = follower.pathBuilder()
+                    if(ok) {
+                        actionTimer.resetTimer();
+                        ok=false;
+                    }
+                    if(actionTimer.getElapsedTimeSeconds()<0.2){
+                        r.HighBucket();
+                    } else if(actionTimer.getElapsedTimeSeconds()>=1.9&& actionTimer.getElapsedTimeSeconds()<2.1){
+                        r.TransferSamp();
+                    }
+                    else if (actionTimer.getElapsedTimeSeconds()>2.1){
+                        follower.followPath(linePickup3,true);
+                        setPathState(8);
+                        ok=true;
+                        break;
+                    }
+                }
+                break;
+            case 8:
+                if(!follower.isBusy()) {
+                    if(ok) {
+                        actionTimer.resetTimer();
+                        ok=false;
+                    }
+                    if(actionTimer.getElapsedTimeSeconds()<0.1){
+                        r.i.toHigh();
+                    }
+                    if(actionTimer.getElapsedTimeSeconds()>=0.2 && actionTimer.getElapsedTimeSeconds()<0.4){
+                        r.i.ground();
+                        r.i.intake.setDirection(DcMotorSimple.Direction.REVERSE);
+                        r.i.intake.setPower(0.7);
+                        r.i.latch.setPosition(0.3);
+                    }
+                    if(actionTimer.getElapsedTimeSeconds()>=0.4){
+                        follower.followPath(positionLine3,true);
+                        setPathState(9);
+                        ok=true;
+                        break;
+                    }
+                }
+                break;
+            case 9:
+                if(!follower.isBusy()) {
+                    if(ok) {
+                        scorePickup3 = follower.pathBuilder()
+                                .addPath(new BezierLine(
+                                                follower.getPose(),
+                                                scorePose
+                                        )
+                                )
+                                .setLinearHeadingInterpolation(follower.getPose().getHeading(), scorePose.getHeading())
+                                .build();
+                        actionTimer.resetTimer();
+                        ok=false;
+                    }
+                    if(actionTimer.getElapsedTimeSeconds()>=0.4){
+                        follower.followPath(scorePickup3,true);
+                        r.i.transfer();
+                        r.i.toDown();
+                        setPathState(10);
+                        ok=true;
+                        break;
+                    }
+                }
+                break;
+            case 10:
+                if(!follower.isBusy()) {
+                   /* Sub1 = follower.pathBuilder()
                             .addPath(new BezierCurve(
                                             new Point(follower.getPose().getX(),follower.getPose().getY(),Point.CARTESIAN),
                                             new Point(67.700, 119.000, Point.CARTESIAN),
@@ -166,19 +340,32 @@ public class AutoBasket extends OpMode{
                             .build();
                     //Pregatestete pentru sub 1
 
-                    follower.followPath(Sub1, true);
-                    setPathState(8);
+                    follower.followPath(Sub1, true); */
+                    if(ok) {
+                        actionTimer.resetTimer();
+                        ok=false;
+                    }
+                    if(actionTimer.getElapsedTimeSeconds()<0.2){
+                        r.HighBucket();
+                    } else if(actionTimer.getElapsedTimeSeconds()>=1.9&& actionTimer.getElapsedTimeSeconds()<2.1){
+                        r.TransferSamp();
+                    }
+                    else if (actionTimer.getElapsedTimeSeconds()>2.1){
+                        r.i.intake.setPower(0);
+                        setPathState(-1);
+                        ok=true;
+                        break;
+                    }
                 }
                 break;
-            case 8:
+            case 11:
                 if(!follower.isBusy()) {
                     vision.find();
-                    Thread.sleep(500);
                     follower.followPath(vision.toTarget());
                     setPathState(9);
                 }
                 break;
-            case 9:
+            case 12:
                 if(!follower.isBusy()) {
                     scoreSub1 = follower.pathBuilder()
                             .addPath(new BezierCurve(
@@ -195,7 +382,7 @@ public class AutoBasket extends OpMode{
                     setPathState(10);
                 }
                 break;
-            case 10:
+            case 13:
                 if(!follower.isBusy()) {
                     Sub2 = follower.pathBuilder()
                             .addPath(new BezierCurve(
@@ -212,14 +399,12 @@ public class AutoBasket extends OpMode{
                     setPathState(11);
                 }
                 break;
-            case 11:
+            case 14:
                 if(!follower.isBusy()) {
-                    vision.find();
-                    Thread.sleep(500);
                     follower.followPath(vision.toTarget());
                 }
                 break;
-            case 12:
+            case 15:
                 if(!follower.isBusy()) {
                     scoreSub2 = follower.pathBuilder()
                             .addPath(new BezierCurve(
@@ -236,7 +421,7 @@ public class AutoBasket extends OpMode{
                     setPathState(13);
                 }
                 break;
-            case 13:
+            case 16:
                 if(!follower.isBusy()) {
                     Sub3 = follower.pathBuilder()
                             .addPath(new BezierCurve(
@@ -253,15 +438,14 @@ public class AutoBasket extends OpMode{
                     setPathState(14);
                 }
                 break;
-            case 14:
+            case 17:
                 if(!follower.isBusy()) {
                     vision.find();
-                    Thread.sleep(500);
                     follower.followPath(vision.toTarget());
                     setPathState(15);
                 }
                 break;
-            case 15:
+            case 18:
                 if(!follower.isBusy()) {
                     scoreSub3 = follower.pathBuilder()
                             .addPath(new BezierCurve(
@@ -278,7 +462,7 @@ public class AutoBasket extends OpMode{
                     setPathState(16);
                 }
                 break;
-            case 16:
+            case 19:
                 if(!follower.isBusy()) {
                     Sub4 = follower.pathBuilder()
                             .addPath(new BezierCurve(
@@ -295,7 +479,7 @@ public class AutoBasket extends OpMode{
                     setPathState(17);
                 }
                 break;
-            case 17:
+            case 20:
                 if(!follower.isBusy()) {
                     setPathState(-1);
                 }
@@ -311,11 +495,9 @@ public class AutoBasket extends OpMode{
     public void loop() {
 
         follower.update();
-        try {
-            autonomousPathUpdate();
-        } catch (InterruptedException e) {
+        autonomousPathUpdate();
+        r.aPeriodic();
 
-        }
         telemetry.addData("path state", pathState);
         telemetry.addData("x", follower.getPose().getX());
         telemetry.addData("y", follower.getPose().getY());
@@ -327,11 +509,17 @@ public class AutoBasket extends OpMode{
     public void init() {
         pathTimer = new Timer();
         opmodeTimer = new Timer();
+        actionTimer = new Timer();
+        actionTimer.resetTimer();
         opmodeTimer.resetTimer();
 
+
+        r = new Robot(hardwareMap, telemetry, gamepad1 , gamepad2,true,true);
         follower = new Follower(hardwareMap, FConstants.class, LConstants.class);
         follower.setStartingPose(startPose);
-        vision = new Vision(hardwareMap,telemetry,"abc","blue",follower,1);
+        /*vision = new Vision(hardwareMap,telemetry,"abc","blue",follower,1);
+        vision.off(); */
+        r.aInit();
         buildPaths();
     }
 
@@ -342,7 +530,6 @@ public class AutoBasket extends OpMode{
     @Override
     public void start() {
         opmodeTimer.resetTimer();
-        vision.on();
         setPathState(0);
     }
 

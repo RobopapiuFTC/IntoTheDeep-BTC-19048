@@ -70,19 +70,19 @@ public class Robot {
         t.update();
     }
     public void tInit(){
-        o.outtake1.setPosition(0.35);
-        o.outtake2.setPosition(0.35);
+        o.outtake1.setPosition(0.27);
+        o.outtake2.setPosition(0.27);
         i.latch.setPosition(0.3);
         i.intake1.setPosition(0.5);
         i.intake2.setPosition(0.5);
     }
     public void aInit(){
-        o.outtake1.setPosition(0.35);
-        o.outtake2.setPosition(0.35);
-        o.claw.setPosition(0.7);
+        o.outtake1.setPosition(0.27);
+        o.outtake2.setPosition(0.27);
+        o.claw.setPosition(0.75);
         o.rotate.setPosition(0.25);
-        i.misumi.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        o.lift1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        i.resetEncoder();
+        o.resetEncoder();
         i.latch.setPosition(0.3);
         i.intake1.setPosition(0.5);
         i.intake2.setPosition(0.5);
@@ -141,6 +141,8 @@ public class Robot {
         else{
             if (g1.dpad_up && !g1.left_bumper) i.toHigh();
             if (g1.dpad_down && !g1.left_bumper) i.toDown();
+            if (g1.dpad_right && !g1.left_bumper) i.toMedium();
+            if (g1.dpad_left && !g1.left_bumper) i.toLow();
 
             if (g1.dpad_up && g1.left_bumper) { //Intake run
                 need = true;
@@ -150,18 +152,25 @@ public class Robot {
                 if (rTimer.getElapsedTimeSeconds() > 0.3) da = !da;
                 rotation(da);
             }
-            if (g1.x && !g1.left_bumper) {
+            if (g1.x && !g1.left_bumper && !g1.right_bumper) {
                 need = false;
                 running = false;
                 i.intake.setDirection(DcMotorSimple.Direction.FORWARD);
                 i.intake.setPower(0.38);
             }
-            if (g1.x && g1.left_bumper) {
+            if (g1.x && !g1.left_bumper && g1.right_bumper) {
+                need = false;
+                running = false;
+                i.intake.setDirection(DcMotorSimple.Direction.REVERSE);
+                i.intake.setPower(0.7);
+                i.latch.setPosition(0.3);
+            }
+            if (g1.x && g1.left_bumper && !g1.right_bumper) {
                 need = false;
                 running = false;
                 i.intake.setPower(0);
             }
-            if(g1.dpad_right){
+            if(g1.dpad_right && g1.left_bumper){
                 o.targetLow();
             }
             if (g1.b && !g1.left_bumper) { //Take spec off wall
@@ -322,7 +331,7 @@ public class Robot {
                     if(iTimer.getElapsedTimeSeconds() >=0.7 && iTimer.getElapsedTimeSeconds()<1){
                         i.toDown();
                     }
-                    if(iTimer.getElapsedTimeSeconds()>=1.1){
+                    if(iTimer.getElapsedTimeSeconds()>=1.3){
                         i.latch.setPosition(0.3);
                         i.intake.setPower(0);
                         running = false;
@@ -351,6 +360,14 @@ public class Robot {
     public void takeSpec(){
         o.needTS = true;
         o.needS = true;
+    }
+    public void HighBucket(){
+        o.needH=true;
+        o.needT=true;
+    }
+    public void TransferSamp(){
+        o.needL = true;
+        o.needTL = true;
     }
 
 }
