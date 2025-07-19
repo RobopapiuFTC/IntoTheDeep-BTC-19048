@@ -36,6 +36,7 @@ public class Robot {
     public Timer iTimer,rTimer;
     public boolean da=true,r,y,b,need=false,running = false,ts=false,spec=false;
     public int flip = 1, iState = -1;
+    public static int offset=20;
     private boolean aInitLoop, frontScore = false, backScore = true, automationActive = false;
 
     public Robot(HardwareMap h, Telemetry t, Gamepad g1, Gamepad g2, boolean blue,boolean spec) {
@@ -99,6 +100,10 @@ public class Robot {
 
     public void dualControls() {
         if (spec) {
+            if(g2.dpad_up)o.targetoffset+=offset;
+            if(g2.dpad_down)o.targetoffset-=offset;
+            if(g2.dpad_right)i.targetoffset+=offset;
+            if(g2.dpad_left)i.targetoffset-=offset;
             if (g1.dpad_up && !g1.left_bumper) i.toHigh();
             if (g1.dpad_down && !g1.left_bumper) i.toDown();
             if (g1.dpad_right && !g1.left_bumper) i.toMedium();
@@ -139,6 +144,10 @@ public class Robot {
             if(g1.options)spec=!spec;
         }
         else{
+            if(g2.dpad_up)o.targetoffset+=offset;
+            if(g2.dpad_down)o.targetoffset-=offset;
+            if(g2.dpad_right)i.targetoffset+=offset;
+            if(g2.dpad_left)i.targetoffset-=offset;
             if (g1.dpad_up && !g1.left_bumper) i.toHigh();
             if (g1.dpad_down && !g1.left_bumper) i.toDown();
             if (g1.dpad_right && !g1.left_bumper) i.toMedium();

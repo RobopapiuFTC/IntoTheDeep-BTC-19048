@@ -25,6 +25,7 @@ public class Outtake {
     public Servo outtake1,outtake2, claw, rotate;
     public int pidLevel=0;
     public static int target=0;
+    public int targetoffset=0;
     public PIDController pid;
     public Telemetry telemetry;
 
@@ -82,7 +83,7 @@ public class Outtake {
     }
     public void setTarget(int b) {
         pidLevel = 1;
-        target = b;
+        target = b+targetoffset;
     }
 
     public int getPos() {

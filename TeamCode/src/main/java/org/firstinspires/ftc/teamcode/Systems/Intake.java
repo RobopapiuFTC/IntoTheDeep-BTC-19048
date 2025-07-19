@@ -24,7 +24,7 @@ public class Intake {
     public Servo intake1,intake2,latch;
     public ColorSensor colorSensor;
     public int pidLevel=0;
-    public static int target=0;
+    public static int target=0,targetoffset=0;
     private boolean ok=false;
     public PIDController pid;
     public Telemetry telemetry;
@@ -71,7 +71,7 @@ public class Intake {
     }
     public void setTarget(int b) {
         pidLevel = 1;
-        target = b;
+        target = b+targetoffset;
     }
 
     public int getPos() {

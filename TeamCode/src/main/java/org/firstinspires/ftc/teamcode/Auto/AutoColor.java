@@ -36,7 +36,7 @@ public class AutoColor extends OpMode{
     private final Pose startPose = new Pose(7, 64, Math.toRadians(0));  // Starting position
     private final Pose scorePose = new Pose(37, 68, Math.toRadians(0)); // Scoring position
     private final Pose humanPose = new Pose(13, 24, Math.toRadians(0)); // Scoring position
-    private double scoreY=80;
+    private double scoreY=78;
     private Pose location,target;
     private PathChain ParkSpec6;
     private PathChain positionLine1,linePickup1,scorePreload, linePickup2, linePickup3, humanLeave1, humanLeave2, humanLeave3, scorePickup1,HumanToScore,ScoreToHuman;
@@ -113,9 +113,11 @@ public class AutoColor extends OpMode{
                 .build();
         scorePickup1 = follower.pathBuilder()
                 .addPath(
-                        new BezierLine(
-                                new Point(28.000, 34, Point.CARTESIAN),
-                                new Point(15, 33, Point.CARTESIAN)
+                        new BezierCurve(
+                                new Point(28.000, 34.000, Point.CARTESIAN),
+                                new Point(70.000, 39.000, Point.CARTESIAN),
+                                new Point(39.000, 17.000, Point.CARTESIAN),
+                                new Point(15.000, 33.000, Point.CARTESIAN)
                         )
                 )
                 .setLinearHeadingInterpolation(Math.toRadians(-150), Math.toRadians(0))
@@ -191,7 +193,7 @@ public class AutoColor extends OpMode{
                     follower.followPath(vision.toTarget()); */
                     r.leaveSpec();
                     follower.followPath(linePickup1,true);
-                    scoreY=scoreY-2.5;
+                    scoreY=scoreY-2;
                     updatePaths();
                     setPathState(2);
                 }
@@ -365,7 +367,7 @@ public class AutoColor extends OpMode{
                 if(!follower.isBusy()) {
                     r.leaveSpec();
                     follower.followPath(ScoreToHuman,true);
-                    scoreY=scoreY-2.5;
+                    scoreY=scoreY-2;
                     updatePaths();
                     setPathState(10);
                 }
@@ -390,7 +392,7 @@ public class AutoColor extends OpMode{
                 if(!follower.isBusy()) {
                     r.leaveSpec();
                     follower.followPath(ScoreToHuman,true);
-                    scoreY=scoreY-2.5;
+                    scoreY=scoreY-2;
                     updatePaths();
                     setPathState(12);
                 }
@@ -415,7 +417,7 @@ public class AutoColor extends OpMode{
                 if(!follower.isBusy()) {
                     r.leaveSpec();
                     follower.followPath(ScoreToHuman,true);
-                    scoreY=scoreY-2.5;
+                    scoreY=scoreY-2;
                     updatePaths();
                     setPathState(14);
                 }
@@ -440,7 +442,7 @@ public class AutoColor extends OpMode{
                 if(!follower.isBusy()) {
                     r.leaveSpec();
                     follower.followPath(ScoreToHuman,true);
-                    scoreY=scoreY-2.5;
+                    scoreY=scoreY-2;
                     updatePaths();
                     setPathState(16);
                 }
@@ -465,7 +467,7 @@ public class AutoColor extends OpMode{
                 if(!follower.isBusy()) {
                     r.leaveSpec();
                     follower.followPath(ScoreToHuman,true);
-                    scoreY=scoreY-2.5;
+                    scoreY=scoreY-2;
                     updatePaths();
                     setPathState(18);
                 }
