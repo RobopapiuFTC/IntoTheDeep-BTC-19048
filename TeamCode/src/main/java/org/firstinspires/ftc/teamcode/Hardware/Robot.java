@@ -80,7 +80,7 @@ public class Robot {
     public void aInit(){
         o.outtake1.setPosition(0.27);
         o.outtake2.setPosition(0.27);
-        o.claw.setPosition(0.75);
+        o.claw.setPosition(0.3);
         o.rotate.setPosition(0.25);
         i.resetEncoder();
         o.resetEncoder();
