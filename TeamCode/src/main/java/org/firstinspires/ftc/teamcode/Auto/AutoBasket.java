@@ -48,10 +48,17 @@ public class AutoBasket extends OpMode{
                 .addPath(
                         new BezierLine(
                                 new Point(scorePose.getX(), scorePose.getY(), Point.CARTESIAN),
-                                new Point(18.5, 134, Point.CARTESIAN)
+                                new Point(15, 134, Point.CARTESIAN)
                         )
                 )
                 .setLinearHeadingInterpolation(Math.toRadians(-45), Math.toRadians(-25))
+                .addPath(
+                        new BezierLine(
+                                new Point(15, 134, Point.CARTESIAN),
+                                new Point(23, 134, Point.CARTESIAN)
+                        )
+                )
+                .setConstantHeadingInterpolation(Math.toRadians(-25))
                 .build();
         positionLine1 = follower.pathBuilder()
                 .addPath(
@@ -68,10 +75,17 @@ public class AutoBasket extends OpMode{
                 .addPath(
                         new BezierLine(
                                 new Point(scorePose.getX(), scorePose.getY(), Point.CARTESIAN),
-                                new Point(18.5, 132, Point.CARTESIAN)
+                                new Point(15, 132, Point.CARTESIAN)
                         )
                 )
                 .setLinearHeadingInterpolation(Math.toRadians(-45), Math.toRadians(0))
+                .addPath(
+                        new BezierLine(
+                                new Point(15, 132, Point.CARTESIAN),
+                                new Point(23, 132, Point.CARTESIAN)
+                        )
+                )
+                .setConstantHeadingInterpolation(Math.toRadians(0))
                 .build();
         positionLine2 = follower.pathBuilder()
                 .addPath(
@@ -87,10 +101,17 @@ public class AutoBasket extends OpMode{
                 .addPath(
                         new BezierLine(
                                 new Point(scorePose.getX(), scorePose.getY(), Point.CARTESIAN),
-                                new Point(40, 111, Point.CARTESIAN)
+                                new Point(30, 111, Point.CARTESIAN)
                         )
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(-45), Math.toRadians(90))
+                .setLinearHeadingInterpolation(Math.toRadians(-45), Math.toRadians(55))
+                .addPath(
+                        new BezierLine(
+                                new Point(30, 111, Point.CARTESIAN),
+                                new Point(30, 121, Point.CARTESIAN)
+                        )
+                )
+                .setConstantHeadingInterpolation(Math.toRadians(55))
                 .build();
         positionLine3 = follower.pathBuilder()
                 .addPath(
@@ -429,7 +450,7 @@ public class AutoBasket extends OpMode{
                     }
                     if(actionTimer.getElapsedTimeSeconds()<0.1){
                         r.i.transfer();
-                        r.i.setTarget(vision.positie()-100);
+                        r.i.setTarget(vision.positie()-50);
                     }
                     if(actionTimer.getElapsedTimeSeconds()>0.1 && actionTimer.getElapsedTimeSeconds()<0.2){
                         r.i.ground();

@@ -94,13 +94,13 @@ public class Intake {
         transfer();
         ok=true;
     }
-    public void toHighish() {
-        setTarget(550);
-        ok=true;
-    }
     public void toDownAuto(){
         setTarget(down+10);
         transfer();
+        ok=true;
+    }
+    public void toHighish() {
+        setTarget(550);
         ok=true;
     }
     public void toLow() {

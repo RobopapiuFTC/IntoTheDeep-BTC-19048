@@ -106,6 +106,7 @@ public class Outtake {
     public void toSpec(){
         setTarget(1215);
     }
+    public void toClimb(){setTarget(1600);}
     public void targetTransfer(){
         setTarget(135);
     }

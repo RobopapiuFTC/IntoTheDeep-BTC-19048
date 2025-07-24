@@ -107,25 +107,31 @@ public class Robot {
 
     public void dualControls() {
         if (spec) {
-            if(g2.dpad_up)o.targetoffset+=offset;
-            if(g2.dpad_down)o.targetoffset-=offset;
-            if(g2.dpad_right)i.targetoffset+=offset;
-            if(g2.dpad_left)i.targetoffset-=offset;
-            if (g1.dpad_up && !g1.left_bumper) i.toHigh();
-            if (g1.dpad_down && !g1.left_bumper) i.toDown();
-            if (g1.dpad_right && !g1.left_bumper) i.toMedium();
-            if (g1.dpad_left && !g1.left_bumper) i.toLow();
+            if(g1.dpad_up && g1.left_trigger>0.3)o.targetoffset+=offset;
+            if(g1.dpad_down && g1.left_trigger>0.3)o.targetoffset-=offset;
+            if(g1.dpad_right && g1.left_trigger>0.3)i.targetoffset+=offset;
+            if(g1.dpad_left && g1.left_trigger>0.3)i.targetoffset-=offset;
+            if (g1.dpad_up && !g1.left_bumper && g1.left_trigger<0.3) i.toHigh();
+            if (g1.dpad_down && !g1.left_bumper && g1.left_trigger<0.3) i.toDown();
+            if (g1.dpad_right && !g1.left_bumper && g1.left_trigger<0.3) i.toMedium();
+            if (g1.dpad_left && !g1.left_bumper && g1.left_trigger<0.3) i.toLow();
 
             if (g1.dpad_up && g1.left_bumper) { //Intake run
                 need = true;
                 running = true;
+            }
+            if (g1.dpad_left && g1.left_bumper) {
+                o.targetHigh();
+            }
+            if(g1.dpad_down && g1.left_bumper){
+                o.toClimb();
             }
             if (g1.y && !g1.left_bumper && i.target>50) { //Rotate intake
                 if (rTimer.getElapsedTimeSeconds() > 0.3) da = !da;
                 rotation(da);
             }
             if(g1.right_bumper && !g1.x ){
-                if (rsTimer.getElapsedTimeSeconds() > 0.1) daS = !daS;
+                if (rsTimer.getElapsedTimeSeconds() > 0.5) daS = !daS;
                 rotationS(daS);
             }
             if (g1.a && !g1.left_bumper) { //Take spec off wall
@@ -166,18 +172,27 @@ public class Robot {
             }
         }
         else{
-            if(g2.dpad_up)o.targetoffset+=offset;
-            if(g2.dpad_down)o.targetoffset-=offset;
-            if(g2.dpad_right)i.targetoffset+=offset;
-            if(g2.dpad_left)i.targetoffset-=offset;
-            if (g1.dpad_up && !g1.left_bumper) i.toHigh();
-            if (g1.dpad_down && !g1.left_bumper) i.toDown();
-            if (g1.dpad_right && !g1.left_bumper) i.toMedium();
-            if (g1.dpad_left && !g1.left_bumper) i.toLow();
+            if(g1.dpad_up && g1.left_trigger>0.3)o.targetoffset+=offset;
+            if(g1.dpad_down && g1.left_trigger>0.3)o.targetoffset-=offset;
+            if(g1.dpad_right && g1.left_trigger>0.3)i.targetoffset+=offset;
+            if(g1.dpad_left && g1.left_trigger>0.3)i.targetoffset-=offset;
+            if (g1.dpad_up && !g1.left_bumper && g1.left_trigger<0.3) i.toHigh();
+            if (g1.dpad_down && !g1.left_bumper && g1.left_trigger<0.3) i.toDown();
+            if (g1.dpad_right && !g1.left_bumper && g1.left_trigger<0.3) i.toMedium();
+            if (g1.dpad_left && !g1.left_bumper && g1.left_trigger<0.3) i.toLow();
 
             if (g1.dpad_up && g1.left_bumper) { //Intake run
                 need = true;
                 running = true;
+            }
+            if(g1.dpad_right && g1.left_bumper){
+                o.targetLow();
+            }
+            if (g1.dpad_left && g1.left_bumper) {
+                o.targetHigh();
+            }
+            if(g1.dpad_down && g1.left_bumper){
+                o.toClimb();
             }
             if (g1.y && !g1.left_bumper && i.target>50) { //Rotate intake
                 if (rTimer.getElapsedTimeSeconds() > 0.3) da = !da;
@@ -191,7 +206,7 @@ public class Robot {
                 i.latch.setPosition(0.25);
             }
             if(g1.right_bumper && !g1.x){
-                if (rsTimer.getElapsedTimeSeconds() > 0.3) daS = !daS;
+                if (rsTimer.getElapsedTimeSeconds() > 0.5) daS = !daS;
                 rotationS(daS);
             }
             if (g1.x && !g1.left_bumper && g1.right_bumper) {
@@ -207,9 +222,6 @@ public class Robot {
                 i.intake.setPower(0);
                 i.latch.setPosition(0.25);
             }
-            if(g1.dpad_right && g1.left_bumper){
-                o.targetLow();
-            }
             if (g1.b && !g1.left_bumper) { //Take spec off wall
                 o.needH = true;
                 o.needT = true;
@@ -223,7 +235,7 @@ public class Robot {
                 o.rotate.setPosition(0.5);
             }
             if (g1.a && g1.left_bumper) o.claw.setPosition(0.77); // Close claw manual
-            if(specTimer.getElapsedTimeSeconds()>0.2 && (g1.ps || g2.y)){
+            if(specTimer.getElapsedTimeSeconds()>1 && (g1.ps || g2.y)){
                 specTimer.resetTimer();
                 spec=!spec;
             }
