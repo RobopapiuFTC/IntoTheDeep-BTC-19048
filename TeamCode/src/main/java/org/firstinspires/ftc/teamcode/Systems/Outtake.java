@@ -233,13 +233,14 @@ public class Outtake {
                 claw.setPosition(0.3);
                 rotate.setPosition(0.5);
             }
-            if(timerSL.getElapsedTimeSeconds()>0.2 && timerSL.getElapsedTimeSeconds()<=0.4){
-                toDown();
-            }
-            if(timerSL.getElapsedTimeSeconds()>0.4 && timerSL.getElapsedTimeSeconds()<=0.7){
+            if(timerSL.getElapsedTimeSeconds()>0.2 && timerSL.getElapsedTimeSeconds()<=0.3){
                 rotate.setPosition(0.37);
                 outtake1.setPosition(0.87);
                 outtake2.setPosition(0.87);
+                toDown();
+            }
+            if(timerSL.getElapsedTimeSeconds()>0.3 && timerSL.getElapsedTimeSeconds()<=0.7){
+                toDown();
                 needSL=false;
             }
         }
@@ -254,13 +255,14 @@ public class Outtake {
                 claw.setPosition(0.3);
                 rotate.setPosition(0.5);
             }
-            if(timerSL.getElapsedTimeSeconds()>0.7 && timerSL.getElapsedTimeSeconds()<=0.9){
-                toDown();
-            }
-            if(timerSL.getElapsedTimeSeconds()>0.9 && timerSL.getElapsedTimeSeconds()<=1.1){
+            if(timerSL.getElapsedTimeSeconds()>0.4 && timerSL.getElapsedTimeSeconds()<=0.5){
                 rotate.setPosition(0.37);
                 outtake1.setPosition(0.87);
                 outtake2.setPosition(0.87);
+                toDown();
+            }
+            if(timerSL.getElapsedTimeSeconds()>0.5 && timerSL.getElapsedTimeSeconds()<=0.7){
+                toDown();
                 needSL=false;
             }
         }
