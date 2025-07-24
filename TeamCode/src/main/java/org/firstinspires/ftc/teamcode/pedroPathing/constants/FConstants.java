@@ -20,7 +20,7 @@ public class FConstants {
         FollowerConstants.rightFrontMotorDirection = DcMotorSimple.Direction.FORWARD;
         FollowerConstants.rightRearMotorDirection = DcMotorSimple.Direction.FORWARD;
 
-        FollowerConstants.mass = 10;
+        FollowerConstants.mass = 14;
 
         FollowerConstants.xMovement = (81.8869 + 81.874 + 81.4576) / 3; //54.97212183753447;
         FollowerConstants.yMovement = (67.3542 + 65.638 + 67.5358)/ 3; //52.295;
@@ -80,7 +80,7 @@ public class FConstants {
         FollowerConstants.secondaryHeadingPIDFFeedForward=0.0005;
 
         FollowerConstants.drivePIDFCoefficients.setCoefficients(
-                0.01,
+                0.03,
                 0,
                 0.0001,
                 0.6,

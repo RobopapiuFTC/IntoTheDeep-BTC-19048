@@ -21,7 +21,7 @@ import com.pedropathing.util.Timer;
 
 public class Intake {
     public DcMotorEx intake,misumi;
-    public Servo intake1,intake2,latch;
+    public Servo intake1,intake2,latch,sweeper;
     public ColorSensor colorSensor;
     public int pidLevel=0;
     public static int target=0,targetoffset=0;
@@ -37,12 +37,14 @@ public class Intake {
     public static double red,blue,green;
     public Intake(HardwareMap hardwareMap, Telemetry telemetry){
         colorSensor = hardwareMap.get(ColorSensor.class, "colorSensor");
+        sweeper = hardwareMap.get(Servo.class, "sweeper");
         intake1 = hardwareMap.get(Servo.class, "intake1");
         intake2 = hardwareMap.get(Servo.class, "intake2");
         intake = hardwareMap.get(DcMotorEx.class, "intake");
         misumi = hardwareMap.get(DcMotorEx.class, "misumi");
         latch = hardwareMap.get(Servo.class, "latch");
         intake.setDirection(DcMotorSimple.Direction.REVERSE);
+        misumi.setDirection(DcMotorSimple.Direction.REVERSE);
         pid = new PIDController(p , i , d);
         it = new Timer();
         it.resetTimer();
@@ -52,10 +54,10 @@ public class Intake {
             pid.setPID(p,i,d);
             misumi.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
 
-            double pid_output = pid.calculate(getPos(), target);
+            double pid_output = pid.calculate(getPos(), target+targetoffset);
             double power = pid_output + f;
 
-            if (getPos() < 0 && target < 1) {
+            if (getPos() < 0 && target+targetoffset < 1+targetoffset) {
                 misumi.setPower(0);
             } else {
                 misumi.setPower(power);
@@ -71,7 +73,7 @@ public class Intake {
     }
     public void setTarget(int b) {
         pidLevel = 1;
-        target = b+targetoffset;
+        target = b;
     }
 
     public int getPos() {
@@ -89,6 +91,16 @@ public class Intake {
 
     public void toDown() {
         setTarget(down);
+        transfer();
+        ok=true;
+    }
+    public void toHighish() {
+        setTarget(550);
+        ok=true;
+    }
+    public void toDownAuto(){
+        setTarget(down+10);
+        transfer();
         ok=true;
     }
     public void toLow() {
@@ -103,7 +115,6 @@ public class Intake {
     }
     public void resetEncoder(){
         misumi.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        misumi.setDirection(DcMotorSimple.Direction.REVERSE);
         misumi.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 

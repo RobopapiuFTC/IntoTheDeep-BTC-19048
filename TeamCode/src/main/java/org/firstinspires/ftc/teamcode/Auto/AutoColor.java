@@ -56,7 +56,7 @@ public class AutoColor extends OpMode{
                 .addPath(
                         new BezierLine(
                                 new Point(40.000, scoreY, Point.CARTESIAN),
-                                new Point(30.000, 47.000, Point.CARTESIAN)
+                                new Point(33, 47.000, Point.CARTESIAN)
                         )
                 )
                 .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(-60))
@@ -65,7 +65,7 @@ public class AutoColor extends OpMode{
         humanLeave1 = follower.pathBuilder()
                 .addPath(
                         new BezierLine(
-                                new Point(30.000, 47.000, Point.CARTESIAN),
+                                new Point(33, 47.000, Point.CARTESIAN),
                                 new Point(27, 45, Point.CARTESIAN)
                         )
                 )
@@ -76,7 +76,7 @@ public class AutoColor extends OpMode{
                 .addPath(
                         new BezierLine(
                                 new Point(27, 45, Point.CARTESIAN),
-                                new Point(27, 38.000, Point.CARTESIAN)
+                                new Point(30, 38.000, Point.CARTESIAN)
                         )
                 )
                 .setLinearHeadingInterpolation(Math.toRadians(-130), Math.toRadians(-60))
@@ -85,7 +85,7 @@ public class AutoColor extends OpMode{
         humanLeave2 = follower.pathBuilder()
                 .addPath(
                         new BezierLine(
-                                new Point(27, 38.000, Point.CARTESIAN),
+                                new Point(30, 38.000, Point.CARTESIAN),
                                 new Point(27, 34, Point.CARTESIAN)
                         )
                 )
@@ -96,7 +96,7 @@ public class AutoColor extends OpMode{
                 .addPath(
                         new BezierLine(
                                 new Point(27, 34, Point.CARTESIAN),
-                                new Point(27, 28, Point.CARTESIAN)
+                                new Point(28, 28, Point.CARTESIAN)
                         )
                 )
                 .setLinearHeadingInterpolation(Math.toRadians(-140), Math.toRadians(-60))
@@ -105,7 +105,7 @@ public class AutoColor extends OpMode{
         humanLeave3 = follower.pathBuilder()
                 .addPath(
                         new BezierLine(
-                                new Point(27, 28, Point.CARTESIAN),
+                                new Point(28, 28, Point.CARTESIAN),
                                 new Point(28.000, 34, Point.CARTESIAN)
                         )
                 )
@@ -117,7 +117,7 @@ public class AutoColor extends OpMode{
                                 new Point(28.000, 34.000, Point.CARTESIAN),
                                 new Point(70.000, 39.000, Point.CARTESIAN),
                                 new Point(39.000, 17.000, Point.CARTESIAN),
-                                new Point(15.000, 33.000, Point.CARTESIAN)
+                                new Point(13, 32.5, Point.CARTESIAN)
                         )
                 )
                 .setLinearHeadingInterpolation(Math.toRadians(-150), Math.toRadians(0))
@@ -125,7 +125,7 @@ public class AutoColor extends OpMode{
         HumanToScore = follower.pathBuilder()
                 .addPath(
                         new BezierCurve(
-                                new Point(15, 33, Point.CARTESIAN),
+                                new Point(13, 32.5, Point.CARTESIAN),
                                 new Point(15.000, 70.500, Point.CARTESIAN),
                                 new Point(40.000, scoreY, Point.CARTESIAN)
                         )
@@ -138,7 +138,7 @@ public class AutoColor extends OpMode{
                                 new Point(40.000, scoreY, Point.CARTESIAN),
                                 new Point(18.000, 71.000, Point.CARTESIAN),
                                 new Point(50.000, 31.000, Point.CARTESIAN),
-                                new Point(15, 33, Point.CARTESIAN)
+                                new Point(14, 32.5, Point.CARTESIAN)
                         )
                 )
                 .setConstantHeadingInterpolation(Math.toRadians(0))
@@ -148,7 +148,7 @@ public class AutoColor extends OpMode{
         HumanToScore = follower.pathBuilder()
                 .addPath(
                         new BezierCurve(
-                                new Point(15, 33, Point.CARTESIAN),
+                                new Point(15, 32.5, Point.CARTESIAN),
                                 new Point(15.000, 70.500, Point.CARTESIAN),
                                 new Point(40.000, scoreY, Point.CARTESIAN)
                         )
@@ -161,7 +161,7 @@ public class AutoColor extends OpMode{
                                 new Point(40.000, scoreY, Point.CARTESIAN),
                                 new Point(18.000, 71.000, Point.CARTESIAN),
                                 new Point(50.000, 31.000, Point.CARTESIAN),
-                                new Point(15, 33, Point.CARTESIAN)
+                                new Point(15, 32.5, Point.CARTESIAN)
                         )
                 )
                 .setConstantHeadingInterpolation(Math.toRadians(0))
@@ -219,13 +219,13 @@ public class AutoColor extends OpMode{
                     if(actionTimer.getElapsedTimeSeconds()<0.1){
                         r.i.toMedium();
                     }
-                    if(actionTimer.getElapsedTimeSeconds()>0.1 && actionTimer.getElapsedTimeSeconds()<0.3){
+                    if(actionTimer.getElapsedTimeSeconds()>0.1 && actionTimer.getElapsedTimeSeconds()<0.2){
                         r.i.ground();
                         r.i.intake.setDirection(DcMotorSimple.Direction.REVERSE);
                         r.i.intake.setPower(0.7);
                         r.i.latch.setPosition(0.3);
-                        r.i.toHigh();
                     }
+                    if(actionTimer.getElapsedTimeSeconds()>0.2 && actionTimer.getElapsedTimeSeconds()<0.3)r.i.toHigh();
                     if(actionTimer.getElapsedTimeSeconds()>0.7) {
                         follower.followPath(humanLeave1, true);
                         setPathState(3);
@@ -249,7 +249,7 @@ public class AutoColor extends OpMode{
                     if(actionTimer.getElapsedTimeSeconds()>0.4 && actionTimer.getElapsedTimeSeconds()<0.7){
                         r.i.transfer();
                         r.i.intake.setPower(0);
-                        r.i.toLow();
+                        r.i.toDown();
                         follower.followPath(linePickup2,true);
                         setPathState(4);
                         ok=true;
@@ -266,13 +266,13 @@ public class AutoColor extends OpMode{
                     if(actionTimer.getElapsedTimeSeconds()<0.1){
                         r.i.toMedium();
                     }
-                    if(actionTimer.getElapsedTimeSeconds()>0.1 && actionTimer.getElapsedTimeSeconds()<0.3){
+                    if(actionTimer.getElapsedTimeSeconds()>0.1 && actionTimer.getElapsedTimeSeconds()<0.2){
                         r.i.ground();
                         r.i.intake.setDirection(DcMotorSimple.Direction.REVERSE);
                         r.i.intake.setPower(0.7);
                         r.i.latch.setPosition(0.3);
-                        r.i.toHigh();
                     }
+                    if(actionTimer.getElapsedTimeSeconds()>0.2 && actionTimer.getElapsedTimeSeconds()<0.3)r.i.toHigh();
                     if(actionTimer.getElapsedTimeSeconds()>0.7) {
                         follower.followPath(humanLeave2,true);
                         setPathState(5);
@@ -295,7 +295,7 @@ public class AutoColor extends OpMode{
                     if(actionTimer.getElapsedTimeSeconds()>0.4 && actionTimer.getElapsedTimeSeconds()<0.7){
                         r.i.transfer();
                         r.i.intake.setPower(0);
-                        r.i.toLow();
+                        r.i.toDown();
                         follower.followPath(linePickup3,true);
                         setPathState(6);
                         ok=true;
@@ -311,13 +311,13 @@ public class AutoColor extends OpMode{
                     if(actionTimer.getElapsedTimeSeconds()<0.1){
                         r.i.toMedium();
                     }
-                    if(actionTimer.getElapsedTimeSeconds()>0.1 && actionTimer.getElapsedTimeSeconds()<0.3){
+                    if(actionTimer.getElapsedTimeSeconds()>0.1 && actionTimer.getElapsedTimeSeconds()<0.2){
                         r.i.ground();
                         r.i.intake.setDirection(DcMotorSimple.Direction.REVERSE);
                         r.i.intake.setPower(0.7);
                         r.i.latch.setPosition(0.3);
-                        r.i.toHigh();
                     }
+                    if(actionTimer.getElapsedTimeSeconds()>0.2 && actionTimer.getElapsedTimeSeconds()<0.3)r.i.toHigh();
                     if(actionTimer.getElapsedTimeSeconds()>0.7) {
                         follower.followPath(humanLeave3,true);
                         setPathState(7);
@@ -353,10 +353,10 @@ public class AutoColor extends OpMode{
                         actionTimer.resetTimer();
                         ok=false;
                     }
-                    if(actionTimer.getElapsedTimeSeconds()<=0.2){
+                    if(actionTimer.getElapsedTimeSeconds()<=0.5){
                         r.takeSpec();
                     }
-                    if(actionTimer.getElapsedTimeSeconds()>0.2){
+                    if(actionTimer.getElapsedTimeSeconds()>0.5){
                         follower.followPath(HumanToScore,true);
                         setPathState(9);
                         ok=true;
@@ -378,10 +378,10 @@ public class AutoColor extends OpMode{
                         actionTimer.resetTimer();
                         ok=false;
                     }
-                    if(actionTimer.getElapsedTimeSeconds()<=0.2){
+                    if(actionTimer.getElapsedTimeSeconds()<=0.5){
                         r.takeSpec();
                     }
-                    if(actionTimer.getElapsedTimeSeconds()>0.2){
+                    if(actionTimer.getElapsedTimeSeconds()>0.5){
                         follower.followPath(HumanToScore,true);
                         setPathState(11);
                         ok=true;
@@ -403,10 +403,10 @@ public class AutoColor extends OpMode{
                         actionTimer.resetTimer();
                         ok=false;
                     }
-                    if(actionTimer.getElapsedTimeSeconds()<=0.2){
+                    if(actionTimer.getElapsedTimeSeconds()<=0.5){
                         r.takeSpec();
                     }
-                    if(actionTimer.getElapsedTimeSeconds()>0.2){
+                    if(actionTimer.getElapsedTimeSeconds()>0.5){
                         follower.followPath(HumanToScore,true);
                         setPathState(13);
                         ok=true;
@@ -428,10 +428,10 @@ public class AutoColor extends OpMode{
                         actionTimer.resetTimer();
                         ok=false;
                     }
-                    if(actionTimer.getElapsedTimeSeconds()<=0.2){
+                    if(actionTimer.getElapsedTimeSeconds()<=0.5){
                         r.takeSpec();
                     }
-                    if(actionTimer.getElapsedTimeSeconds()>0.2){
+                    if(actionTimer.getElapsedTimeSeconds()>0.5){
                         follower.followPath(HumanToScore,true);
                         setPathState(15);
                         ok=true;
@@ -444,7 +444,7 @@ public class AutoColor extends OpMode{
                     follower.followPath(ScoreToHuman,true);
                     scoreY=scoreY-2;
                     updatePaths();
-                    setPathState(16);
+                    setPathState(-1);
                 }
                 break;
             case 16:
@@ -453,10 +453,10 @@ public class AutoColor extends OpMode{
                         actionTimer.resetTimer();
                         ok=false;
                     }
-                    if(actionTimer.getElapsedTimeSeconds()<=0.2){
+                    if(actionTimer.getElapsedTimeSeconds()<=0.4){
                         r.takeSpec();
                     }
-                    if(actionTimer.getElapsedTimeSeconds()>0.2){
+                    if(actionTimer.getElapsedTimeSeconds()>0.4){
                         follower.followPath(HumanToScore,true);
                         setPathState(17);
                         ok=true;

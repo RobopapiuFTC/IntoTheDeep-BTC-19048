@@ -33,8 +33,8 @@ public class Robot {
 
     public Pose s = new Pose();
     public double speed = 0.9;
-    public Timer iTimer,rTimer;
-    public boolean da=true,r,y,b,need=false,running = false,ts=false,spec=false;
+    public Timer iTimer,rTimer,rsTimer,specTimer;
+    public boolean da=true,r,y,b,need=false,running = false,ts=false,spec=false,daS=false;
     public int flip = 1, iState = -1;
     public static int offset=20;
     private boolean aInitLoop, frontScore = false, backScore = true, automationActive = false;
@@ -54,6 +54,8 @@ public class Robot {
         m = new Movement(this.h,this.t);
         iTimer = new Timer();
         rTimer = new Timer();
+        rsTimer = new Timer();
+        specTimer = new Timer();
     }
 
     public void aPeriodic() {
@@ -71,20 +73,25 @@ public class Robot {
         t.update();
     }
     public void tInit(){
+        o.targetoffset=0;
+        i.sweeper.setPosition(0.8);
         o.outtake1.setPosition(0.27);
         o.outtake2.setPosition(0.27);
-        i.latch.setPosition(0.3);
+        o.rotate.setPosition(0.6);
+        i.latch.setPosition(0.25);
         i.intake1.setPosition(0.5);
         i.intake2.setPosition(0.5);
     }
     public void aInit(){
+        o.targetoffset=0;
+        i.sweeper.setPosition(0.8);
         o.outtake1.setPosition(0.27);
         o.outtake2.setPosition(0.27);
-        o.claw.setPosition(0.3);
+        o.claw.setPosition(0.75);
         o.rotate.setPosition(0.25);
         i.resetEncoder();
         o.resetEncoder();
-        i.latch.setPosition(0.3);
+        i.latch.setPosition(0.55);
         i.intake1.setPosition(0.5);
         i.intake2.setPosition(0.5);
     }
@@ -113,9 +120,13 @@ public class Robot {
                 need = true;
                 running = true;
             }
-            if (g1.y && !g1.left_bumper) { //Rotate intake
+            if (g1.y && !g1.left_bumper && i.target>50) { //Rotate intake
                 if (rTimer.getElapsedTimeSeconds() > 0.3) da = !da;
                 rotation(da);
+            }
+            if(g1.right_bumper && !g1.x ){
+                if (rsTimer.getElapsedTimeSeconds() > 0.1) daS = !daS;
+                rotationS(daS);
             }
             if (g1.a && !g1.left_bumper) { //Take spec off wall
                 o.needTS = true;
@@ -125,23 +136,34 @@ public class Robot {
                 o.needTSL = true;
                 o.needSL = true;
             }
-            if (g1.x && !g1.left_bumper) {
+            if (g1.x && !g1.left_bumper && !g1.right_bumper) {
                 need = false;
                 running = false;
                 i.intake.setDirection(DcMotorSimple.Direction.FORWARD);
                 i.intake.setPower(0.38);
+                i.latch.setPosition(0.25);
             }
-            if (g1.x && g1.left_bumper) {
+            if (g1.x && !g1.left_bumper && g1.right_bumper) {
+                need = false;
+                running = false;
+                i.intake.setDirection(DcMotorSimple.Direction.REVERSE);
+                i.intake.setPower(0.7);
+                i.latch.setPosition(0.25);
+            }
+            if (g1.x && g1.left_bumper && !g1.right_bumper) {
                 need = false;
                 running = false;
                 i.intake.setPower(0);
+                i.latch.setPosition(0.25);
             }
             if (g1.b && g1.left_bumper) { //Leave spec on bar manual
-                o.claw.setPosition(0.5);
                 o.rotate.setPosition(0.5);
             }
-            if (g1.a && g1.left_bumper) o.claw.setPosition(0.77); // Close claw manual
-            if(g1.options)spec=!spec;
+            if (g1.a && g1.left_bumper) o.claw.setPosition(0.75); // Close claw manual
+            if(specTimer.getElapsedTimeSeconds()>1 && (g1.ps || g2.y)){
+                specTimer.resetTimer();
+                spec=!spec;
+            }
         }
         else{
             if(g2.dpad_up)o.targetoffset+=offset;
@@ -157,7 +179,7 @@ public class Robot {
                 need = true;
                 running = true;
             }
-            if (g1.y && !g1.left_bumper) { //Rotate intake
+            if (g1.y && !g1.left_bumper && i.target>50) { //Rotate intake
                 if (rTimer.getElapsedTimeSeconds() > 0.3) da = !da;
                 rotation(da);
             }
@@ -166,18 +188,24 @@ public class Robot {
                 running = false;
                 i.intake.setDirection(DcMotorSimple.Direction.FORWARD);
                 i.intake.setPower(0.38);
+                i.latch.setPosition(0.25);
+            }
+            if(g1.right_bumper && !g1.x){
+                if (rsTimer.getElapsedTimeSeconds() > 0.3) daS = !daS;
+                rotationS(daS);
             }
             if (g1.x && !g1.left_bumper && g1.right_bumper) {
                 need = false;
                 running = false;
                 i.intake.setDirection(DcMotorSimple.Direction.REVERSE);
                 i.intake.setPower(0.7);
-                i.latch.setPosition(0.3);
+                i.latch.setPosition(0.25);
             }
             if (g1.x && g1.left_bumper && !g1.right_bumper) {
                 need = false;
                 running = false;
                 i.intake.setPower(0);
+                i.latch.setPosition(0.25);
             }
             if(g1.dpad_right && g1.left_bumper){
                 o.targetLow();
@@ -195,7 +223,10 @@ public class Robot {
                 o.rotate.setPosition(0.5);
             }
             if (g1.a && g1.left_bumper) o.claw.setPosition(0.77); // Close claw manual
-            if(g1.options)spec=!spec;
+            if(specTimer.getElapsedTimeSeconds()>0.2 && (g1.ps || g2.y)){
+                specTimer.resetTimer();
+                spec=!spec;
+            }
         }
     }
     public void setIntakeState(int x){
@@ -228,6 +259,16 @@ public class Robot {
                 rTimer.resetTimer();
             }
     }
+    public void rotationS(boolean yes){
+        if(rTimer.getElapsedTimeSeconds()>0.1)
+            if(yes){
+                i.sweeper.setPosition(0.4);
+                rTimer.resetTimer();
+            }else {
+                i.sweeper.setPosition(0.8);
+                rTimer.resetTimer();
+            }
+    }
     public void spec(boolean baw){
         if(o.timerS.getElapsedTimeSeconds()>0.5 || o.timerSL.getElapsedTimeSeconds()>0.5) {
             if (baw) {
@@ -253,7 +294,7 @@ public class Robot {
            if(need) {
                i.intake.setDirection(DcMotorSimple.Direction.REVERSE);
                i.intake.setPower(0.7);
-               i.latch.setPosition(0.3);
+               i.latch.setPosition(0.25);
            }
             red = i.colorSensor.red();
             blue = i.colorSensor.blue();
@@ -292,14 +333,14 @@ public class Robot {
                     }
                     if (iTimer.getElapsedTimeSeconds() >= 0.4 && iTimer.getElapsedTimeSeconds()<0.6) {
                         i.intake.setDirection(DcMotorSimple.Direction.REVERSE);
-                        i.intake.setPower(0.5);
+                        i.intake.setPower(0.7);
                     }
                     if(iTimer.getElapsedTimeSeconds() >=0.7 && iTimer.getElapsedTimeSeconds()<1){
                         i.toDown();
                     }
                     if(iTimer.getElapsedTimeSeconds()>=1.1){
-                        i.latch.setPosition(0.3);
-                        i.intake.setPower(0);
+                        i.latch.setPosition(0.25);
+                        //i.intake.setPower(0);
                         running = false;
                         r=false;
                         b=false;
@@ -335,14 +376,14 @@ public class Robot {
                     }
                     if (iTimer.getElapsedTimeSeconds() >= 0.4 && iTimer.getElapsedTimeSeconds()<0.6) {
                         i.intake.setDirection(DcMotorSimple.Direction.REVERSE);
-                        i.intake.setPower(0.5);
+                        i.intake.setPower(0.7);
                     }
                     if(iTimer.getElapsedTimeSeconds() >=0.7 && iTimer.getElapsedTimeSeconds()<1){
                         i.toDown();
                     }
                     if(iTimer.getElapsedTimeSeconds()>=1.3){
-                        i.latch.setPosition(0.3);
-                        i.intake.setPower(0);
+                        i.latch.setPosition(0.25);
+                       // i.intake.setPower(0);
                         running = false;
                         r=false;
                         b=false;

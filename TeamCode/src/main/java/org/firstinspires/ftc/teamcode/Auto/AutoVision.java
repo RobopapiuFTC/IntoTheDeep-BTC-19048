@@ -17,8 +17,8 @@ import org.firstinspires.ftc.teamcode.Hardware.Robot;
 import org.firstinspires.ftc.teamcode.pedroPathing.constants.FConstants;
 import org.firstinspires.ftc.teamcode.pedroPathing.constants.LConstants;
 
-@Autonomous(name = "Basket", group = "org/firstinspires/ftc/teamcode/Auto")
-public class AutoBasket extends OpMode{
+@Autonomous(name = "Vision", group = "org/firstinspires/ftc/teamcode/Auto")
+public class AutoVision extends OpMode{
     /* You could check for
                 - Follower State: "if(!follower.isBusy() {}"
                 - Time: "if(pathTimer.getElapsedTimeSeconds() > 1) {}"
@@ -31,7 +31,7 @@ public class AutoBasket extends OpMode{
     private int pathState;
     private Robot r;
 
-    private final Pose startPose = new Pose(8, 111, Math.toRadians(0));  // Starting position
+    private final Pose startPose = new Pose(8, 111, Math.toRadians(-90));  // Starting position
     private final Pose scorePose = new Pose(14, 132, Math.toRadians(315)); // Scoring position
     private final Pose humanPose = new Pose(13, 24, Math.toRadians(0)); // Scoring position
 
@@ -48,7 +48,7 @@ public class AutoBasket extends OpMode{
                 .addPath(
                         new BezierLine(
                                 new Point(scorePose.getX(), scorePose.getY(), Point.CARTESIAN),
-                                new Point(18.5, 134, Point.CARTESIAN)
+                                new Point(17, 134, Point.CARTESIAN)
                         )
                 )
                 .setLinearHeadingInterpolation(Math.toRadians(-45), Math.toRadians(-25))
@@ -68,7 +68,7 @@ public class AutoBasket extends OpMode{
                 .addPath(
                         new BezierLine(
                                 new Point(scorePose.getX(), scorePose.getY(), Point.CARTESIAN),
-                                new Point(18.5, 132, Point.CARTESIAN)
+                                new Point(17, 132, Point.CARTESIAN)
                         )
                 )
                 .setLinearHeadingInterpolation(Math.toRadians(-45), Math.toRadians(0))
@@ -90,7 +90,7 @@ public class AutoBasket extends OpMode{
                                 new Point(40, 111, Point.CARTESIAN)
                         )
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(-45), Math.toRadians(90))
+                .setLinearHeadingInterpolation(Math.toRadians(-45), Math.toRadians(75))
                 .build();
         positionLine3 = follower.pathBuilder()
                 .addPath(
@@ -139,12 +139,12 @@ public class AutoBasket extends OpMode{
         switch (pathState) {
             case 0:
                 if(ok) {
-                    follower.followPath(scorePreload,true);
-                    r.o.targetHigh();
+                    vision.find();
                     actionTimer.resetTimer();
                     ok=false;
                 }
-                if(actionTimer.getElapsedTimeSeconds()>0.7){
+                if(actionTimer.getElapsedTimeSeconds()>1){
+                    follower.followPath(vision.toTarget(),true);
                     setPathState(1);
                     ok=true;
                     break;
@@ -155,30 +155,26 @@ public class AutoBasket extends OpMode{
                         actionTimer.resetTimer();
                         ok=false;
                     }
-                    if(actionTimer.getElapsedTimeSeconds()<0.1)r.i.toHigh();
-                    if(actionTimer.getElapsedTimeSeconds()>0.1 && actionTimer.getElapsedTimeSeconds()<0.3){
-                        r.i.latch.setPosition(0.3);
-                        r.o.outtake1.setPosition(0.62);
-                        r.o.outtake2.setPosition(0.62);
-                        r.o.rotate.setPosition(0.7);
+                    if(actionTimer.getElapsedTimeSeconds()<0.1){
+                        r.i.transfer();
+                        r.i.toLow();
                     }
-                    else if(actionTimer.getElapsedTimeSeconds()>=0.5 && actionTimer.getElapsedTimeSeconds()<0.7){
-                        r.o.claw.setPosition(0.5);
-                    }
-                    else if(actionTimer.getElapsedTimeSeconds()>=0.7 && actionTimer.getElapsedTimeSeconds()<0.8){
-                        r.o.rotate.setPosition(0.37);
-                        r.o.outtake1.setPosition(0.06);
-                        r.o.outtake2.setPosition(0.06);
-                        r.i.toHigh();
-
-                    }
-                    if(actionTimer.getElapsedTimeSeconds()>0.8){
-                        follower.followPath(linePickup1,true);
+                    if(actionTimer.getElapsedTimeSeconds()>0.1 && actionTimer.getElapsedTimeSeconds()<0.2){
                         r.i.ground();
+                    }
+                    if(actionTimer.getElapsedTimeSeconds()>0.4 && actionTimer.getElapsedTimeSeconds()<0.5){
+                        r.i.setTarget(vision.positie());
+                    }
+                    if(actionTimer.getElapsedTimeSeconds()>0.5 && actionTimer.getElapsedTimeSeconds()<0.6){
                         r.i.intake.setDirection(DcMotorSimple.Direction.REVERSE);
                         r.i.intake.setPower(0.7);
-                        r.TransferSamp();
-                        setPathState(2);
+                        r.i.latch.setPosition(0.3);
+                    }
+                    if(actionTimer.getElapsedTimeSeconds()>1 && actionTimer.getElapsedTimeSeconds()<1.1){
+                        r.i.toDown();
+                    }
+                    if(actionTimer.getElapsedTimeSeconds()>1.3){
+                        setPathState(-1);
                         ok=true;
                         break;
                     }
@@ -199,9 +195,7 @@ public class AutoBasket extends OpMode{
                         actionTimer.resetTimer();
                         ok=false;
                     }
-                    if(actionTimer.getElapsedTimeSeconds()<0.3){
-                        r.i.toDownAuto();
-                    }
+                    if(actionTimer.getElapsedTimeSeconds()<0.3)r.i.toDownAuto();
                     if(actionTimer.getElapsedTimeSeconds()>=0.4){
                         r.HighBucket();
                         follower.followPath(scorePickup1,true);
@@ -218,7 +212,7 @@ public class AutoBasket extends OpMode{
                         ok=false;
                     }
                     if(actionTimer.getElapsedTimeSeconds()>0.8&& actionTimer.getElapsedTimeSeconds()<0.9){
-                        r.o.claw.setPosition(0.5);
+                        r.TransferSamp();
                     }
                     if(actionTimer.getElapsedTimeSeconds()>0.9&& actionTimer.getElapsedTimeSeconds()<1){
                         r.i.toHigh();
@@ -228,7 +222,6 @@ public class AutoBasket extends OpMode{
                         r.i.intake.setDirection(DcMotorSimple.Direction.REVERSE);
                         r.i.intake.setPower(0.7);
                         follower.followPath(linePickup2,true);
-                        r.TransferSamp();
                         setPathState(4);
                         ok=true;
                         break;
@@ -268,7 +261,7 @@ public class AutoBasket extends OpMode{
                         ok=false;
                     }
                     if(actionTimer.getElapsedTimeSeconds()>0.8&& actionTimer.getElapsedTimeSeconds()<0.9){
-                        r.o.claw.setPosition(0.5);
+                        r.TransferSamp();
                     }
                     if(actionTimer.getElapsedTimeSeconds()>0.9&& actionTimer.getElapsedTimeSeconds()<1){
                         r.i.toHigh();
@@ -278,7 +271,6 @@ public class AutoBasket extends OpMode{
                         r.i.intake.setDirection(DcMotorSimple.Direction.REVERSE);
                         r.i.intake.setPower(0.7);
                         follower.followPath(linePickup3,true);
-                        r.TransferSamp();
                         setPathState(6);
                         ok=true;
                         break;
@@ -316,12 +308,11 @@ public class AutoBasket extends OpMode{
                         ok=false;
                     }
                     if(actionTimer.getElapsedTimeSeconds()>0.8&& actionTimer.getElapsedTimeSeconds()<0.9){
-                        r.o.claw.setPosition(0.5);
+                        r.TransferSamp();
                     }
                     else if (actionTimer.getElapsedTimeSeconds()>1){
                         r.i.intake.setPower(0);
                         follower.followPath(subPose,true);
-                        r.TransferSamp();
                         setPathState(8);
                         ok=true;
                         break;
@@ -352,31 +343,21 @@ public class AutoBasket extends OpMode{
                     }
                     if(actionTimer.getElapsedTimeSeconds()<0.1){
                         r.i.transfer();
-                        r.i.setTarget(vision.positie()-50);
+                        r.i.toHighish();
                     }
                     if(actionTimer.getElapsedTimeSeconds()>0.1 && actionTimer.getElapsedTimeSeconds()<0.2){
                         r.i.ground();
                     }
                     if(actionTimer.getElapsedTimeSeconds()>0.4 && actionTimer.getElapsedTimeSeconds()<0.5){
-                        r.i.setTarget(vision.positie());
+                        r.i.toHigh();
                     }
                     if(actionTimer.getElapsedTimeSeconds()>0.5 && actionTimer.getElapsedTimeSeconds()<0.6){
                         r.i.intake.setDirection(DcMotorSimple.Direction.REVERSE);
                         r.i.intake.setPower(0.7);
                         r.i.latch.setPosition(0.3);
                     }
-                    if(actionTimer.getElapsedTimeSeconds()>0.9 && actionTimer.getElapsedTimeSeconds()<1){
-                        r.i.latch.setPosition(0.6);
-                        r.i.intake.setDirection(DcMotorSimple.Direction.FORWARD);
-                        r.i.intake.setPower(0.38);
-                    }
                     if(actionTimer.getElapsedTimeSeconds()>1 && actionTimer.getElapsedTimeSeconds()<1.1){
                         r.i.toDown();
-                    }
-                    if(actionTimer.getElapsedTimeSeconds()>1.1 && actionTimer.getElapsedTimeSeconds()<1.2) {
-                        r.i.intake.setDirection(DcMotorSimple.Direction.REVERSE);
-                        r.i.intake.setPower(0.7);
-                        r.i.latch.setPosition(0.3);
                     }
                     if(actionTimer.getElapsedTimeSeconds()>1.3){
                         r.HighBucket();
@@ -429,9 +410,9 @@ public class AutoBasket extends OpMode{
                     }
                     if(actionTimer.getElapsedTimeSeconds()<0.1){
                         r.i.transfer();
-                        r.i.setTarget(vision.positie()-100);
+                        r.i.toLow();
                     }
-                    if(actionTimer.getElapsedTimeSeconds()>0.1 && actionTimer.getElapsedTimeSeconds()<0.2){
+                    if(actionTimer.getElapsedTimeSeconds()>0.3 && actionTimer.getElapsedTimeSeconds()<0.4){
                         r.i.ground();
                     }
                     if(actionTimer.getElapsedTimeSeconds()>0.4 && actionTimer.getElapsedTimeSeconds()<0.5){
@@ -496,13 +477,13 @@ public class AutoBasket extends OpMode{
                     }
                     if(actionTimer.getElapsedTimeSeconds()<0.1){
                         r.i.transfer();
-                        r.i.setTarget(vision.positie()-100);
+                        r.i.toHighish();
                     }
-                    if(actionTimer.getElapsedTimeSeconds()>0.1 && actionTimer.getElapsedTimeSeconds()<0.2){
+                    if(actionTimer.getElapsedTimeSeconds()>0.3 && actionTimer.getElapsedTimeSeconds()<0.4){
                         r.i.ground();
                     }
                     if(actionTimer.getElapsedTimeSeconds()>0.4 && actionTimer.getElapsedTimeSeconds()<0.5){
-                        r.i.setTarget(vision.positie());
+                        r.i.toHigh();
                     }
                     if(actionTimer.getElapsedTimeSeconds()>0.5 && actionTimer.getElapsedTimeSeconds()<0.6){
                         r.i.intake.setDirection(DcMotorSimple.Direction.REVERSE);

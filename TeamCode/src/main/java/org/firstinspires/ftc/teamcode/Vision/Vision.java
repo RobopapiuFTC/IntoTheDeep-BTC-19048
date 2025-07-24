@@ -21,11 +21,12 @@ public class Vision {
     // Limelight and claw configuration
     public static double limelightHeight = 10; // Camera height in inches
     public static double limelightAngle = 60; // Camera angle (0° = down, 90° = forward)
-    public static double intakeForwardOffset = 5; // Claw's forward offset from the camera
-    public static double intakeLateralOffset = 5; // Claw's lateral (right is +) offset from the camera
+    public static double intakeForwardOffset = 0; // Claw's forward offset from the camera
+    public static double intakeLateralOffset = 3; // Claw's lateral (right is +) offset from the camera
 
     private Pose sample = new Pose(), difference = new Pose(), target = new Pose(); // The best sample's position
     private Pose cachedTarget = new Pose(); // Cached best sample
+    public int intake = 0;
     private Limelight3A limelight;
     private PathChain toTarget;
     private LLResult result;
@@ -94,7 +95,7 @@ public class Vision {
                         detection.getTargetCorners().get(1).get(0)) /
                         (detection.getTargetCorners().get(1).get(1) -
                                 detection.getTargetCorners().get(2).get(1)) - (1.5 / 3.5)); */
-                double score = -yDistance - Math.abs(xDistance); // Weighted scoring
+                double score = -yDistance + Math.abs(xDistance); // Weighted scoring
 
                 double angle = 0;
 
@@ -129,7 +130,9 @@ public class Vision {
 
             difference = new Pose(sample.getX() - intakeForwardOffset, sample.getY() + intakeLateralOffset, 0);
 
-            target = new Pose(f.getPose().getX() + difference.getX(), f.getPose().getY() + difference.getY(), f.getPose().getHeading());
+            target = new Pose(f.getPose().getX() + difference.getY(), f.getPose().getY(), f.getPose().getHeading());
+            intake = (int)((Math.abs(sample.getX())/8)*600);
+
 
             cachedTarget = target.copy();
 
@@ -165,6 +168,7 @@ public class Vision {
     public void on() {
         limelight.start();
     }
+    public int positie(){return intake;}
 
     public double getAngle() {
         return bestAngle;

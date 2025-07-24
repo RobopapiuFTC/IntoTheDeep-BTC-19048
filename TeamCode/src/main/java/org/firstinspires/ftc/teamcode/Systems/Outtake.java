@@ -49,6 +49,7 @@ public class Outtake {
         timerS= new Timer();
         timerSL= new Timer();
         //Leave here
+        lift2.setDirection(DcMotorSimple.Direction.REVERSE);
 
         pid = new PIDController(p , i , d);
 
@@ -58,10 +59,10 @@ public class Outtake {
             lift1.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
             lift2.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
 
-            double pid_output = pid.calculate(getPos(), target);
+            double pid_output = pid.calculate(getPos(), target+targetoffset);
             double power = pid_output + f;
 
-            if (getPos() < 4 && target < 4) {
+            if (getPos() < 4 && target+targetoffset < 4+targetoffset) {
                 lift1.setPower(0);
                 lift2.setPower(0);
             } else {
@@ -83,7 +84,7 @@ public class Outtake {
     }
     public void setTarget(int b) {
         pidLevel = 1;
-        target = b+targetoffset;
+        target = b;
     }
 
     public int getPos() {
@@ -103,7 +104,7 @@ public class Outtake {
         setTarget(0);
     }
     public void toSpec(){
-        setTarget(1230);
+        setTarget(1215);
     }
     public void targetTransfer(){
         setTarget(135);
@@ -117,7 +118,6 @@ public class Outtake {
     public void resetEncoder(){
         lift1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         lift1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        lift2.setDirection(DcMotorSimple.Direction.REVERSE);
         lift2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
     public boolean roughlyAtTarget() {
@@ -162,7 +162,7 @@ public class Outtake {
             }
             if(timerH.getElapsedTimeSeconds()>0 && timerH.getElapsedTimeSeconds()<=0.2){
                 claw.setPosition(0.5);
-                rotate.setPosition(0.37);
+                rotate.setPosition(0.39);
                 outtake1.setPosition(0.06);
                 outtake2.setPosition(0.06);
             }
@@ -191,7 +191,7 @@ public class Outtake {
             }
             if(timerL.getElapsedTimeSeconds()>0 && timerL.getElapsedTimeSeconds()<=0.2)claw.setPosition(0.5);
             if(timerL.getElapsedTimeSeconds()>0.3 && timerL.getElapsedTimeSeconds()<=0.5){
-                rotate.setPosition(0.37);
+                rotate.setPosition(0.39);
                 outtake1.setPosition(0.06);
                 outtake2.setPosition(0.06);
             }
@@ -208,13 +208,13 @@ public class Outtake {
                 timerS.resetTimer();
                 needTS=false;
             }
-            if(timerS.getElapsedTimeSeconds()>0 && timerS.getElapsedTimeSeconds()<=0.1){
+            if(timerS.getElapsedTimeSeconds()>0 && timerS.getElapsedTimeSeconds()<=0.2){
                 claw.setPosition(0.75);
             }
-            if(timerS.getElapsedTimeSeconds()>0.2 && timerS.getElapsedTimeSeconds()<=0.4){
+            if(timerS.getElapsedTimeSeconds()>0.4 && timerS.getElapsedTimeSeconds()<=0.5){
                toSpec();
            }
-        if(timerS.getElapsedTimeSeconds()>0.4 && timerS.getElapsedTimeSeconds()<=0.6){
+        if(timerS.getElapsedTimeSeconds()>0.5 && timerS.getElapsedTimeSeconds()<=0.6){
                 outtake1.setPosition(0.27);
                 outtake2.setPosition(0.27);
                 rotate.setPosition(0.3);
@@ -229,14 +229,14 @@ public class Outtake {
                 needTSL=false;
             }
             if(timerSL.getElapsedTimeSeconds()>0 && timerSL.getElapsedTimeSeconds()<=0.1){
-                claw.setPosition(0.5);
+                claw.setPosition(0.3);
                 rotate.setPosition(0.5);
             }
             if(timerSL.getElapsedTimeSeconds()>0.2 && timerSL.getElapsedTimeSeconds()<=0.4){
                 toDown();
             }
             if(timerSL.getElapsedTimeSeconds()>0.4 && timerSL.getElapsedTimeSeconds()<=0.7){
-                rotate.setPosition(0.3);
+                rotate.setPosition(0.37);
                 outtake1.setPosition(0.87);
                 outtake2.setPosition(0.87);
                 needSL=false;
@@ -250,14 +250,14 @@ public class Outtake {
                 needTSL=false;
             }
             if(timerSL.getElapsedTimeSeconds()>0 && timerSL.getElapsedTimeSeconds()<=0.1){
-                claw.setPosition(0.5);
+                claw.setPosition(0.3);
                 rotate.setPosition(0.5);
             }
             if(timerSL.getElapsedTimeSeconds()>0.7 && timerSL.getElapsedTimeSeconds()<=0.9){
                 toDown();
             }
             if(timerSL.getElapsedTimeSeconds()>0.9 && timerSL.getElapsedTimeSeconds()<=1.1){
-                rotate.setPosition(0.3);
+                rotate.setPosition(0.37);
                 outtake1.setPosition(0.87);
                 outtake2.setPosition(0.87);
                 needSL=false;
