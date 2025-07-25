@@ -81,13 +81,14 @@ public class Robot {
         i.latch.setPosition(0.25);
         i.intake1.setPosition(0.5);
         i.intake2.setPosition(0.5);
+        o.claw.setPosition(0.5);
     }
     public void aInit(){
         o.targetoffset=0;
         i.sweeper.setPosition(0.8);
         o.outtake1.setPosition(0.27);
         o.outtake2.setPosition(0.27);
-        o.claw.setPosition(0.75);
+        o.claw.setPosition(0.27);
         o.rotate.setPosition(0.25);
         i.resetEncoder();
         o.resetEncoder();
@@ -165,7 +166,7 @@ public class Robot {
             if (g1.b && g1.left_bumper) { //Leave spec on bar manual
                 o.rotate.setPosition(0.5);
             }
-            if (g1.a && g1.left_bumper) o.claw.setPosition(0.75); // Close claw manual
+            if (g1.a && g1.left_bumper) o.claw.setPosition(0.27); // Close claw manual
             if(specTimer.getElapsedTimeSeconds()>1 && (g1.ps || g2.y)){
                 specTimer.resetTimer();
                 spec=!spec;
@@ -234,7 +235,7 @@ public class Robot {
                 o.claw.setPosition(0.5);
                 o.rotate.setPosition(0.5);
             }
-            if (g1.a && g1.left_bumper) o.claw.setPosition(0.77); // Close claw manual
+            if (g1.a && g1.left_bumper) o.claw.setPosition(0.27); // Close claw manual
             if(specTimer.getElapsedTimeSeconds()>1 && (g1.ps || g2.y)){
                 specTimer.resetTimer();
                 spec=!spec;

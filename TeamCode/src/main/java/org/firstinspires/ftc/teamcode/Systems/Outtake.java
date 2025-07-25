@@ -171,7 +171,7 @@ public class Outtake {
                 targetTransfer();
             }
             if(timerH.getElapsedTimeSeconds()>0.5 && timerH.getElapsedTimeSeconds()<=0.6){
-                claw.setPosition(0.65);
+                claw.setPosition(0.35);
             }
             if(timerH.getElapsedTimeSeconds()>0.6 && timerH.getElapsedTimeSeconds()<=0.8){
                 targetHigh();
@@ -210,7 +210,7 @@ public class Outtake {
                 needTS=false;
             }
             if(timerS.getElapsedTimeSeconds()>0 && timerS.getElapsedTimeSeconds()<=0.2){
-                claw.setPosition(0.75);
+                claw.setPosition(0.27);
             }
             if(timerS.getElapsedTimeSeconds()>0.4 && timerS.getElapsedTimeSeconds()<=0.5){
                toSpec();
@@ -230,7 +230,7 @@ public class Outtake {
                 needTSL=false;
             }
             if(timerSL.getElapsedTimeSeconds()>0 && timerSL.getElapsedTimeSeconds()<=0.1){
-                claw.setPosition(0.3);
+                claw.setPosition(0.73);
                 rotate.setPosition(0.5);
             }
             if(timerSL.getElapsedTimeSeconds()>0.2 && timerSL.getElapsedTimeSeconds()<=0.3){
@@ -252,7 +252,7 @@ public class Outtake {
                 needTSL=false;
             }
             if(timerSL.getElapsedTimeSeconds()>0 && timerSL.getElapsedTimeSeconds()<=0.1){
-                claw.setPosition(0.3);
+                claw.setPosition(0.73);
                 rotate.setPosition(0.5);
             }
             if(timerSL.getElapsedTimeSeconds()>0.4 && timerSL.getElapsedTimeSeconds()<=0.5){
